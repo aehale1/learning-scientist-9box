@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Scientist 9-Box Assessment</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a2e; font-size: 14px; }
+
+header {
+  background: #4f46e5;
+  color: white;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+header p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+
+.app { display: flex; gap: 0; min-height: calc(100vh - 56px); }
+
+/* ── LEFT PANEL ── */
+.form-panel {
+  width: 420px;
+  flex-shrink: 0;
+  background: white;
+  border-right: 1px solid #e2e4ea;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.form-panel h2 { font-size: 14px; font-weight: 700; color: #4f46e5; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.name-row { margin-bottom: 16px; }
+.name-row label { font-size: 11px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 4px; }
+.name-row input {
+  width: 100%; border: 1.5px solid #d1d5db; border-radius: 6px;
+  padding: 8px 10px; font-size: 14px; outline: none; transition: border-color 0.15s;
+}
+.name-row input:focus { border-color: #4f46e5; }
+
+.axis-section { margin-bottom: 20px; }
+.axis-title {
+  font-size: 12px; font-weight: 700; color: white;
+  background: #374151; padding: 6px 10px; border-radius: 6px;
+  margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+}
+.axis-score-badge {
+  background: rgba(255,255,255,0.2); border-radius: 4px;
+  padding: 2px 8px; font-size: 12px; font-weight: 700;
+}
+.axis-section.capacity .axis-title { background: #312e81; }
+.axis-section.stance .axis-title { background: #065f46; }
+
+.dim { margin-bottom: 12px; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+.dim-header { padding: 8px 10px; background: #f9fafb; display: flex; justify-content: space-between; align-items: center; }
+.dim-label { font-size: 12px; font-weight: 600; color: #374151; }
+.btn-group { display: flex; gap: 4px; }
+.btn-group button {
+  width: 32px; height: 28px; border: 1.5px solid #d1d5db;
+  border-radius: 5px; background: white; font-size: 12px; font-weight: 700;
+  color: #6b7280; cursor: pointer; transition: all 0.12s;
+}
+.btn-group button:hover { border-color: #4f46e5; color: #4f46e5; }
+.btn-group button.sel-1 { background: #fee2e2; border-color: #ef4444; color: #b91c1c; }
+.btn-group button.sel-2 { background: #fef9c3; border-color: #ca8a04; color: #92400e; }
+.btn-group button.sel-3 { background: #d1fae5; border-color: #059669; color: #065f46; }
+.dim-anchor { padding: 6px 10px; font-size: 11px; color: #6b7280; line-height: 1.5; min-height: 36px; border-top: 1px solid #f0f0f0; background: white; }
+.dim-anchor.anchor-1 { color: #b91c1c; background: #fff5f5; }
+.dim-anchor.anchor-2 { color: #92400e; background: #fffef0; }
+.dim-anchor.anchor-3 { color: #065f46; background: #f0fdf4; }
+
+.composite-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #f3f4f6; border-radius: 6px; padding: 8px 12px; margin-top: 4px;
+}
+.composite-label { font-size: 11px; font-weight: 600; color: #6b7280; }
+.composite-score { font-size: 18px; font-weight: 800; color: #374151; }
+
+.add-btn {
+  width: 100%; padding: 10px; background: #4f46e5; color: white;
+  border: none; border-radius: 8px; font-size: 14px; font-weight: 700;
+  cursor: pointer; margin-top: 16px; transition: background 0.15s;
+}
+.add-btn:hover { background: #4338ca; }
+.add-btn:disabled { background: #a5b4fc; cursor: not-allowed; }
+
+/* ── RIGHT PANEL ── */
+.right-panel { flex: 1; padding: 20px; overflow-y: auto; }
+
+.grid-and-detail { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+
+.grid-container { flex: 0 0 auto; }
+.grid-container h2 { font-size: 14px; font-weight: 700; color: #4f46e5; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.grid-outer { display: flex; align-items: stretch; gap: 0; }
+
+.y-axis-label {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-size: 10px; font-weight: 700; color: #374151; text-align: center;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding-right: 6px; width: 20px;
+}
+
+.grid-inner { display: flex; flex-direction: column; }
+
+.grid-row { display: flex; }
+.row-labels { display: flex; flex-direction: column; }
+.row-label {
+  font-size: 9px; font-weight: 700; color: #6b7280; text-transform: uppercase;
+  width: 28px; height: 100px; display: flex; align-items: center; justify-content: flex-end;
+  padding-right: 5px; line-height: 1.2; text-align: right;
+}
+
+.grid-svg-wrap { position: relative; }
+
+svg.ninebox { display: block; }
+
+.col-labels { display: flex; margin-top: 4px; margin-left: 28px; }
+.col-label {
+  font-size: 9px; font-weight: 700; color: #6b7280; text-transform: uppercase;
+  text-align: center; letter-spacing: 0.3px;
+}
+.x-axis-title {
+  font-size: 10px; font-weight: 700; color: #374151; text-transform: uppercase;
+  letter-spacing: 0.5px; text-align: center; margin-top: 8px; margin-left: 28px;
+}
+
+/* Detail Card */
+.detail-card {
+  flex: 1; min-width: 220px; background: white; border-radius: 10px;
+  border: 1.5px solid #e2e4ea; padding: 16px; display: none;
+}
+.detail-card.visible { display: block; }
+.detail-person { font-size: 16px; font-weight: 800; color: #1a1a2e; margin-bottom: 2px; }
+.detail-archetype { font-size: 13px; font-weight: 600; color: #4f46e5; margin-bottom: 8px; }
+.detail-scores { display: flex; gap: 8px; margin-bottom: 10px; }
+.score-pill {
+  flex: 1; background: #f3f4f6; border-radius: 6px; padding: 6px 8px; text-align: center;
+}
+.score-pill .pill-label { font-size: 9px; text-transform: uppercase; color: #6b7280; font-weight: 600; letter-spacing: 0.3px; }
+.score-pill .pill-val { font-size: 20px; font-weight: 800; color: #374151; }
+.detail-desc { font-size: 12px; color: #4b5563; line-height: 1.6; margin-bottom: 10px; }
+.detail-dev { font-size: 12px; color: #374151; line-height: 1.6; }
+.detail-dev strong { color: #4f46e5; }
+
+/* Roster */
+.roster-section { margin-top: 24px; background: white; border-radius: 10px; border: 1px solid #e2e4ea; overflow: hidden; }
+.roster-header { padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+.roster-header h2 { font-size: 14px; font-weight: 700; color: #4f46e5; text-transform: uppercase; letter-spacing: 0.5px; }
+.clear-btn { font-size: 12px; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 600; }
+
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.3px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+td { padding: 8px 16px; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafafa; cursor: pointer; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.tag-low { background: #fee2e2; color: #b91c1c; }
+.tag-mid { background: #fef9c3; color: #92400e; }
+.tag-high { background: #d1fae5; color: #065f46; }
+.remove-btn { background: none; border: none; color: #d1d5db; cursor: pointer; font-size: 16px; }
+.remove-btn:hover { color: #ef4444; }
+
+.empty-state { padding: 24px; text-align: center; color: #9ca3af; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Learning Scientist 9-Box Assessment</h1>
+    <p>Manager rating tool · Rate each dimension 1–3 · Auto-places staff on the development grid</p>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- LEFT: Form -->
+  <div class="form-panel">
+    <h2>Rate a Staff Member</h2>
+
+    <div class="name-row">
+      <label>Staff Member Name</label>
+      <input type="text" id="staff-name" placeholder="e.g. Jordan Smith">
+    </div>
+
+    <!-- AXIS 1: Professional Capacity -->
+    <div class="axis-section capacity">
+      <div class="axis-title">
+        Professional Capacity (Y)
+        <span class="axis-score-badge" id="y-score-badge">—</span>
+      </div>
+
+      <div class="dim" id="dim-context">
+        <div class="dim-header">
+          <span class="dim-label">Context</span>
+          <div class="btn-group">
+            <button onclick="rate('context',1)" id="context-1">1</button>
+            <button onclick="rate('context',2)" id="context-2">2</button>
+            <button onclick="rate('context',3)" id="context-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="context-anchor">Reads the landscape: organizational, industry, and field-level shifts that shape learning priorities.</div>
+      </div>
+
+      <div class="dim" id="dim-foresight">
+        <div class="dim-header">
+          <span class="dim-label">Foresight</span>
+          <div class="btn-group">
+            <button onclick="rate('foresight',1)" id="foresight-1">1</button>
+            <button onclick="rate('foresight',2)" id="foresight-2">2</button>
+            <button onclick="rate('foresight',3)" id="foresight-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="foresight-anchor">Anticipates needs, trends, and problems before they are explicit; proactive rather than reactive.</div>
+      </div>
+
+      <div class="dim" id="dim-expertise">
+        <div class="dim-header">
+          <span class="dim-label">Expertise</span>
+          <div class="btn-group">
+            <button onclick="rate('expertise',1)" id="expertise-1">1</button>
+            <button onclick="rate('expertise',2)" id="expertise-2">2</button>
+            <button onclick="rate('expertise',3)" id="expertise-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="expertise-anchor">Depth of research methods, learning theory, data analysis, or technical architecture knowledge.</div>
+      </div>
+
+      <div class="composite-row">
+        <span class="composite-label">Capacity Score (avg)</span>
+        <span class="composite-score" id="y-score">—</span>
+      </div>
+    </div>
+
+    <!-- AXIS 2: Adaptive Stance -->
+    <div class="axis-section stance">
+      <div class="axis-title">
+        Adaptive Stance (X)
+        <span class="axis-score-badge" id="x-score-badge">—</span>
+      </div>
+
+      <div class="dim">
+        <div class="dim-header">
+          <span class="dim-label">Human</span>
+          <div class="btn-group">
+            <button onclick="rate('human',1)" id="human-1">1</button>
+            <button onclick="rate('human',2)" id="human-2">2</button>
+            <button onclick="rate('human',3)" id="human-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="human-anchor">Centers the human experience of learners and stakeholders; bridges data and human insight.</div>
+      </div>
+
+      <div class="dim">
+        <div class="dim-header">
+          <span class="dim-label">Connected</span>
+          <div class="btn-group">
+            <button onclick="rate('connected',1)" id="connected-1">1</button>
+            <button onclick="rate('connected',2)" id="connected-2">2</button>
+            <button onclick="rate('connected',3)" id="connected-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="connected-anchor">Builds and leverages a professional network inside and outside the organization.</div>
+      </div>
+
+      <div class="dim">
+        <div class="dim-header">
+          <span class="dim-label">Boundary Spanning</span>
+          <div class="btn-group">
+            <button onclick="rate('boundary',1)" id="boundary-1">1</button>
+            <button onclick="rate('boundary',2)" id="boundary-2">2</button>
+            <button onclick="rate('boundary',3)" id="boundary-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="boundary-anchor">Works fluidly across disciplines, teams, and organizational levels; translates between specialists.</div>
+      </div>
+
+      <div class="dim">
+        <div class="dim-header">
+          <span class="dim-label">Expert Generalist</span>
+          <div class="btn-group">
+            <button onclick="rate('generalist',1)" id="generalist-1">1</button>
+            <button onclick="rate('generalist',2)" id="generalist-2">2</button>
+            <button onclick="rate('generalist',3)" id="generalist-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="generalist-anchor">Clear depth in a primary domain combined with genuine working knowledge across adjacent areas (T-shaped).</div>
+      </div>
+
+      <div class="dim">
+        <div class="dim-header">
+          <span class="dim-label">Connectivism</span>
+          <div class="btn-group">
+            <button onclick="rate('connectivism',1)" id="connectivism-1">1</button>
+            <button onclick="rate('connectivism',2)" id="connectivism-2">2</button>
+            <button onclick="rate('connectivism',3)" id="connectivism-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="connectivism-anchor">Treats knowledge as distributed; actively cultivates and contributes to communities of practice and knowledge networks.</div>
+      </div>
+
+      <div class="dim">
+        <div class="dim-header">
+          <span class="dim-label">Adaptive</span>
+          <div class="btn-group">
+            <button onclick="rate('adaptive',1)" id="adaptive-1">1</button>
+            <button onclick="rate('adaptive',2)" id="adaptive-2">2</button>
+            <button onclick="rate('adaptive',3)" id="adaptive-3">3</button>
+          </div>
+        </div>
+        <div class="dim-anchor" id="adaptive-anchor">Thrives in ambiguity; updates approaches based on new information; resilient and iterative under change.</div>
+      </div>
+
+      <div class="composite-row">
+        <span class="composite-label">Stance Score (avg)</span>
+        <span class="composite-score" id="x-score">—</span>
+      </div>
+    </div>
+
+    <button class="add-btn" id="add-btn" onclick="addPerson()" disabled>Add to Grid</button>
+  </div>
+
+  <!-- RIGHT: Grid + Detail + Roster -->
+  <div class="right-panel">
+    <div class="grid-and-detail">
+
+      <!-- 9-Box Grid -->
+      <div class="grid-container">
+        <h2>Team Grid</h2>
+        <div class="grid-outer">
+          <div class="y-axis-label">Professional Capacity →</div>
+          <div class="grid-inner">
+            <div class="grid-row">
+              <div class="row-labels">
+                <div class="row-label">High</div>
+                <div class="row-label">Mid</div>
+                <div class="row-label">Low</div>
+              </div>
+              <div class="grid-svg-wrap">
+                <svg class="ninebox" id="ninebox-svg" width="390" height="300" viewBox="0 0 390 300">
+                  <!-- Grid cells -->
+                  <!-- Row 0 (high Y): y=0 -->
+                  <rect x="0"   y="0"   width="130" height="100" fill="#d0f0e8" stroke="#ccc" stroke-width="1"/>
+                  <rect x="130" y="0"   width="130" height="100" fill="#bbd4ff" stroke="#ccc" stroke-width="1"/>
+                  <rect x="260" y="0"   width="130" height="100" fill="#4f46e5" stroke="#ccc" stroke-width="1"/>
+                  <!-- Row 1 (mid Y): y=100 -->
+                  <rect x="0"   y="100" width="130" height="100" fill="#e3f4ee" stroke="#ccc" stroke-width="1"/>
+                  <rect x="130" y="100" width="130" height="100" fill="#d4eaf8" stroke="#ccc" stroke-width="1"/>
+                  <rect x="260" y="100" width="130" height="100" fill="#c9e0ff" stroke="#ccc" stroke-width="1"/>
+                  <!-- Row 2 (low Y): y=200 -->
+                  <rect x="0"   y="200" width="130" height="100" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+                  <rect x="130" y="200" width="130" height="100" fill="#e8eaf6" stroke="#ccc" stroke-width="1"/>
+                  <rect x="260" y="200" width="130" height="100" fill="#dde8f8" stroke="#ccc" stroke-width="1"/>
+
+                  <!-- Cell labels -->
+                  <text x="65"  y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e4a">The Expert</text>
+                  <text x="195" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#1a2d8f">The Researcher</text>
+                  <text x="325" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="white">The Architect</text>
+                  <text x="325" y="35" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">⭐ Target</text>
+
+                  <text x="65"  y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#2d6a4f">The Analyst</text>
+                  <text x="195" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#1e5f8a">The Practitioner</text>
+                  <text x="325" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#1a3a8f">The Translator</text>
+
+                  <text x="65"  y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#555">The Novice</text>
+                  <text x="195" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#4a5568">The Explorer</text>
+                  <text x="325" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#3a4a7a">The Networker</text>
+
+                  <!-- Mid divider lines (darker) -->
+                  <line x1="130" y1="0" x2="130" y2="300" stroke="#aaa" stroke-width="1.5"/>
+                  <line x1="260" y1="0" x2="260" y2="300" stroke="#aaa" stroke-width="1.5"/>
+                  <line x1="0" y1="100" x2="390" y2="100" stroke="#aaa" stroke-width="1.5"/>
+                  <line x1="0" y1="200" x2="390" y2="200" stroke="#aaa" stroke-width="1.5"/>
+
+                  <!-- People dots — drawn by JS -->
+                  <g id="people-layer"></g>
+                </svg>
+              </div>
+            </div>
+            <div class="col-labels">
+              <div class="col-label" style="width:130px">Narrow</div>
+              <div class="col-label" style="width:130px">Emerging</div>
+              <div class="col-label" style="width:130px">Spanning</div>
+            </div>
+            <div class="x-axis-title">← Adaptive Stance →</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail card -->
+      <div class="detail-card" id="detail-card">
+        <div class="detail-person" id="d-person">—</div>
+        <div class="detail-archetype" id="d-archetype">—</div>
+        <div class="detail-scores">
+          <div class="score-pill">
+            <div class="pill-label">Capacity (Y)</div>
+            <div class="pill-val" id="d-yscore">—</div>
+          </div>
+          <div class="score-pill">
+            <div class="pill-label">Stance (X)</div>
+            <div class="pill-val" id="d-xscore">—</div>
+          </div>
+        </div>
+        <div class="detail-desc" id="d-desc">—</div>
+        <div class="detail-dev" id="d-dev">—</div>
+      </div>
+    </div>
+
+    <!-- Roster Table -->
+    <div class="roster-section">
+      <div class="roster-header">
+        <h2>Team Roster</h2>
+        <button class="clear-btn" onclick="clearAll()">Clear all</button>
+      </div>
+      <div id="roster-body">
+        <div class="empty-state">No staff rated yet. Use the form on the left to add team members.</div>
+      </div>
+    </div>
+
+  </div><!-- /right-panel -->
+</div><!-- /app -->
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const DIMS = {
+  context:      { label: 'Context',          axis: 'y' },
+  foresight:    { label: 'Foresight',         axis: 'y' },
+  expertise:    { label: 'Expertise',         axis: 'y' },
+  human:        { label: 'Human',             axis: 'x' },
+  connected:    { label: 'Connected',         axis: 'x' },
+  boundary:     { label: 'Boundary Spanning', axis: 'x' },
+  generalist:   { label: 'Expert Generalist', axis: 'x' },
+  connectivism: { label: 'Connectivism',      axis: 'x' },
+  adaptive:     { label: 'Adaptive',          axis: 'x' },
+};
+
+const ANCHORS = {
+  context:      { 1: 'Works within assigned tasks; rarely connects work to broader goals or external trends.', 2: 'Shows awareness of org context; explains how work connects to team goals; references trends when prompted.', 3: 'Actively reads the landscape; situates work within broader strategy; anticipates how context shifts affect learning priorities.' },
+  foresight:    { 1: 'Reactive; waits for direction; focused on current tasks without anticipating future needs.', 2: 'Beginning to think ahead; raises proactive questions; identifies emerging issues when prompted.', 3: 'Consistently anticipates needs before they\'re explicit; tracks trends; surfaces future risks and opportunities without prompting.' },
+  expertise:    { 1: 'Foundational knowledge; requires significant guidance on methods, theory, or tools; output needs substantial review.', 2: 'Solid working knowledge; executes familiar methods independently; seeks guidance on complex or novel problems.', 3: 'Deep, current expertise; independently scopes and executes complex work; recognized as a resource; pushes the field forward.' },
+  human:        { 1: 'Work is output-focused; limited attention to human experience; rarely integrates qualitative or stakeholder insight.', 2: 'Values human-centered approaches; incorporates learner/stakeholder perspective when prompted; growing empathy in practice.', 3: 'Consistently centers human experience; seeks out voices of learners and stakeholders; designs with, not just for, people.' },
+  connected:    { 1: 'Works largely in isolation; limited relationships outside immediate team; rarely leverages others\' knowledge.', 2: 'Building relationships across the team; beginning to leverage external connections; participates in cross-team interactions.', 3: 'Actively cultivates a broad professional network inside and outside the org; known and trusted across teams.' },
+  boundary:     { 1: 'Operates within a single function; limited cross-team collaboration; defers to specialists outside their area.', 2: 'Collaborates across some teams or disciplines; growing comfort working outside their primary area.', 3: 'Fluidly moves across disciplines, teams, and org levels; translates between specialists and generalists; drives cross-functional work.' },
+  generalist:   { 1: 'Either very narrow (no breadth) or very broad (no depth); not yet both simultaneously.', 2: 'Identifiable depth in at least one area with emerging breadth; working toward a T-shaped profile.', 3: 'Clear deep expertise in their primary domain combined with genuine working knowledge across adjacent areas.' },
+  connectivism: { 1: 'Treats knowledge as individually held; limited habit of seeking or sharing through networks or communities.', 2: 'Drawing on distributed knowledge sources; participates in communities of practice; starting to curate and share.', 3: 'Actively cultivates distributed knowledge networks; contributes to and learns from communities of practice; helps others connect.' },
+  adaptive:     { 1: 'Prefers stability and clear structure; struggles with ambiguity or change; may resist pivoting.', 2: 'Managing uncertainty with growing confidence; can adapt when directed; building resilience.', 3: 'Thrives in ambiguity; models adaptive behavior; updates approaches based on new information; resilient and iterative.' },
+};
+
+const ARCHETYPES = {
+  '1,1': { name: 'The Novice',      desc: 'Early in their learning science journey — building all foundations simultaneously. Needs mentoring on technical skills, context-reading, and relational habits.', dev: '<strong>Development focus:</strong> Pair with a mentor. Build technical foundations (methods, theory). Introduce cross-functional projects early to develop adaptive habits.' },
+  '2,1': { name: 'The Explorer',    desc: 'Curious and relationally aware — beginning to see learning problems as connected and human. Not yet equipped with the analytical depth to act on that awareness effectively.', dev: '<strong>Development focus:</strong> Channel curiosity into structured learning. Assign projects that require synthesis across data and human insight.' },
+  '3,1': { name: 'The Networker',   desc: 'Highly connected and relationally skilled — people trust them and they move across silos easily. Analytical and methodological foundations are thin, limiting the quality of what they produce.', dev: '<strong>Development focus:</strong> Ground relational energy in rigorous methods. Enroll in research design or data architecture skill-building.' },
+  '1,2': { name: 'The Analyst',     desc: 'Technically solid — strong in data analysis, methodology, or learning design — but operates in a narrow lane. Doesn\'t yet leverage networks or cross-disciplinary perspectives to amplify their work.', dev: '<strong>Development focus:</strong> Push them out of the silo. Assign cross-team projects. Coach toward connectivism and knowledge-sharing habits.' },
+  '2,2': { name: 'The Practitioner',desc: 'The balanced developing professional. Growing in both dimensions — solid enough to produce quality work and becoming more connected and adaptive. Clear paths forward on either axis.', dev: '<strong>Development focus:</strong> Identify which axis is lagging and accelerate it. Stretch assignments in the underrepresented dimension.' },
+  '3,2': { name: 'The Translator',  desc: 'Exceptionally good at bridging — across teams, disciplines, and stakeholders. Makes insights accessible and actionable. Depth and rigor aren\'t fully there yet, which can limit credibility on complex analytical work.', dev: '<strong>Development focus:</strong> Pair with a deep expert. Push into more rigorous research or data architecture challenges to build credibility.' },
+  '1,3': { name: 'The Expert',      desc: 'A deep subject matter expert — strong in research, learning theory, or data architecture — but impact is bounded by how they work: specialist-mode, not yet leveraging knowledge through networks.', dev: '<strong>Development focus:</strong> Retention and leverage risk. Push into thought leadership, mentorship, or cross-org initiatives to unlock full impact.' },
+  '2,3': { name: 'The Researcher',  desc: 'High-capability professional with genuine analytical and contextual depth, and growing relational and adaptive breadth. Close to the target state — likely needs sustained cross-boundary experience to fully arrive.', dev: '<strong>Development focus:</strong> Give them a stretch assignment that requires leading across functions or working with a novel stakeholder set.' },
+  '3,3': { name: 'The Architect',   desc: 'The target profile. Deep expertise paired with strong context-reading, foresight, and the ability to connect and translate across people, teams, and disciplines. Doesn\'t just produce insights — shapes how the field thinks.', dev: '<strong>Development focus:</strong> Retain and leverage. These are your mentors, thought leaders, and org designers. Give them scope, not just tasks.' },
+};
+
+// ── STATE ─────────────────────────────────────────────────────────
+let ratings = {};
+let people = [];
+let selectedPerson = null;
+
+const COLORS = ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#84cc16'];
+
+// ── RATING LOGIC ──────────────────────────────────────────────────
+function rate(dim, val) {
+  ratings[dim] = val;
+
+  // Update button styles
+  [1,2,3].forEach(v => {
+    const btn = document.getElementById(`${dim}-${v}`);
+    btn.className = '';
+    if (v === val) btn.classList.add(`sel-${v}`);
+  });
+
+  // Update anchor text
+  const anchor = document.getElementById(`${dim}-anchor`);
+  anchor.textContent = ANCHORS[dim][val];
+  anchor.className = `dim-anchor anchor-${val}`;
+
+  updateScores();
+}
+
+function updateScores() {
+  const yDims = ['context','foresight','expertise'];
+  const xDims = ['human','connected','boundary','generalist','connectivism','adaptive'];
+
+  const yRated = yDims.filter(d => ratings[d]);
+  const xRated = xDims.filter(d => ratings[d]);
+
+  const yAvg = yRated.length === yDims.length ? (yDims.reduce((s,d) => s + ratings[d], 0) / yDims.length) : null;
+  const xAvg = xRated.length === xDims.length ? (xDims.reduce((s,d) => s + ratings[d], 0) / xDims.length) : null;
+
+  const yEl = document.getElementById('y-score');
+  const xEl = document.getElementById('x-score');
+  const yBadge = document.getElementById('y-score-badge');
+  const xBadge = document.getElementById('x-score-badge');
+
+  if (yAvg !== null) {
+    const disp = yAvg.toFixed(2);
+    yEl.textContent = disp;
+    yBadge.textContent = disp;
+  } else {
+    const partial = yRated.length > 0 ? `${yRated.length}/${yDims.length}` : '—';
+    yEl.textContent = partial;
+    yBadge.textContent = partial;
+  }
+
+  if (xAvg !== null) {
+    const disp = xAvg.toFixed(2);
+    xEl.textContent = disp;
+    xBadge.textContent = disp;
+  } else {
+    const partial = xRated.length > 0 ? `${xRated.length}/${xDims.length}` : '—';
+    xEl.textContent = partial;
+    xBadge.textContent = partial;
+  }
+
+  const allDims = Object.keys(DIMS);
+  const allRated = allDims.every(d => ratings[d]);
+  const nameOk = document.getElementById('staff-name').value.trim().length > 0;
+  document.getElementById('add-btn').disabled = !(allRated && nameOk);
+}
+
+document.getElementById('staff-name').addEventListener('input', updateScores);
+
+// ── SCORE → BAND ──────────────────────────────────────────────────
+function band(score) {
+  if (score <= 1.67) return 1;
+  if (score <= 2.33) return 2;
+  return 3;
+}
+
+// ── ADD PERSON ────────────────────────────────────────────────────
+function addPerson() {
+  const name = document.getElementById('staff-name').value.trim();
+  if (!name) return;
+
+  const yDims = ['context','foresight','expertise'];
+  const xDims = ['human','connected','boundary','generalist','connectivism','adaptive'];
+  const yScore = yDims.reduce((s,d) => s + ratings[d], 0) / yDims.length;
+  const xScore = xDims.reduce((s,d) => s + ratings[d], 0) / xDims.length;
+
+  const xBand = band(xScore);
+  const yBand = band(yScore);
+  const archetype = ARCHETYPES[`${xBand},${yBand}`];
+  const color = COLORS[people.length % COLORS.length];
+
+  const person = {
+    id: Date.now(),
+    name,
+    ratings: { ...ratings },
+    yScore: +yScore.toFixed(2),
+    xScore: +xScore.toFixed(2),
+    xBand,
+    yBand,
+    archetype,
+    color,
+    initials: name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)
+  };
+
+  people.push(person);
+  renderGrid();
+  renderRoster();
+  showDetail(person);
+  resetForm();
+}
+
+// ── GRID ──────────────────────────────────────────────────────────
+const DOT_R = 18;
+function scoreToXPx(xScore) {
+  // xScore 1–3, inset by DOT_R so edge dots aren't clipped; grid center preserved
+  return DOT_R + ((xScore - 1) / 2) * (390 - 2 * DOT_R);
+}
+function scoreToYPx(yScore) {
+  // yScore 1–3, high = top, low = bottom; inset by DOT_R
+  return DOT_R + ((3 - yScore) / 2) * (300 - 2 * DOT_R);
+}
+
+function renderGrid() {
+  const layer = document.getElementById('people-layer');
+  layer.innerHTML = '';
+
+  people.forEach((p, i) => {
+    const cx = scoreToXPx(p.xScore);
+    const cy = scoreToYPx(p.yScore);
+    const r = DOT_R;
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor = 'pointer';
+    g.addEventListener('click', () => showDetail(p));
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', p.color);
+    circle.setAttribute('stroke', 'white');
+    circle.setAttribute('stroke-width', '2');
+    circle.setAttribute('opacity', '0.92');
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x', cx);
+    text.setAttribute('y', cy + 4);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-size', '10');
+    text.setAttribute('font-weight', '700');
+    text.setAttribute('fill', 'white');
+    text.textContent = p.initials;
+
+    g.appendChild(circle);
+    g.appendChild(text);
+    layer.appendChild(g);
+  });
+}
+
+// ── DETAIL CARD ───────────────────────────────────────────────────
+function showDetail(p) {
+  selectedPerson = p;
+  document.getElementById('d-person').textContent = p.name;
+  document.getElementById('d-archetype').textContent = p.archetype.name;
+  document.getElementById('d-yscore').textContent = p.yScore;
+  document.getElementById('d-xscore').textContent = p.xScore;
+  document.getElementById('d-desc').textContent = p.archetype.desc;
+  document.getElementById('d-dev').innerHTML = p.archetype.dev;
+  document.getElementById('detail-card').classList.add('visible');
+}
+
+// ── ROSTER ────────────────────────────────────────────────────────
+function bandTag(b) {
+  const cls = b === 1 ? 'low' : b === 2 ? 'mid' : 'high';
+  const lbl = b === 1 ? 'Low' : b === 2 ? 'Mid' : 'High';
+  return `<span class="tag tag-${cls}">${lbl}</span>`;
+}
+
+function renderRoster() {
+  const body = document.getElementById('roster-body');
+  if (people.length === 0) {
+    body.innerHTML = '<div class="empty-state">No staff rated yet. Use the form on the left to add team members.</div>';
+    return;
+  }
+  let html = `<table>
+    <thead><tr>
+      <th>Name</th><th>Capacity (Y)</th><th>Stance (X)</th><th>Archetype</th><th>Capacity Band</th><th>Stance Band</th><th></th>
+    </tr></thead><tbody>`;
+  people.forEach(p => {
+    html += `<tr onclick="showDetail(people.find(x=>x.id===${p.id}))">
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:6px;"></span><strong>${p.name}</strong></td>
+      <td>${p.yScore}</td>
+      <td>${p.xScore}</td>
+      <td><strong>${p.archetype.name}</strong></td>
+      <td>${bandTag(p.yBand)}</td>
+      <td>${bandTag(p.xBand)}</td>
+      <td><button class="remove-btn" onclick="event.stopPropagation();removePerson(${p.id})">✕</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  body.innerHTML = html;
+}
+
+function removePerson(id) {
+  people = people.filter(p => p.id !== id);
+  if (selectedPerson && selectedPerson.id === id) {
+    document.getElementById('detail-card').classList.remove('visible');
+    selectedPerson = null;
+  }
+  renderGrid();
+  renderRoster();
+}
+
+function clearAll() {
+  if (!confirm('Clear all staff ratings from the grid?')) return;
+  people = [];
+  selectedPerson = null;
+  document.getElementById('detail-card').classList.remove('visible');
+  renderGrid();
+  renderRoster();
+}
+
+// ── RESET FORM ────────────────────────────────────────────────────
+function resetForm() {
+  document.getElementById('staff-name').value = '';
+  ratings = {};
+  Object.keys(DIMS).forEach(dim => {
+    [1,2,3].forEach(v => {
+      const btn = document.getElementById(`${dim}-${v}`);
+      if (btn) btn.className = '';
+    });
+    const anchor = document.getElementById(`${dim}-anchor`);
+    if (anchor) {
+      anchor.className = 'dim-anchor';
+      anchor.textContent = {
+        context: 'Reads the landscape: organizational, industry, and field-level shifts that shape learning priorities.',
+        foresight: 'Anticipates needs, trends, and problems before they are explicit; proactive rather than reactive.',
+        expertise: 'Depth of research methods, learning theory, data analysis, or technical architecture knowledge.',
+        human: 'Centers the human experience of learners and stakeholders; bridges data and human insight.',
+        connected: 'Builds and leverages a professional network inside and outside the organization.',
+        boundary: 'Works fluidly across disciplines, teams, and organizational levels; translates between specialists.',
+        generalist: 'Clear depth in a primary domain combined with genuine working knowledge across adjacent areas (T-shaped).',
+        connectivism: 'Treats knowledge as distributed; actively cultivates and contributes to communities of practice and knowledge networks.',
+        adaptive: 'Thrives in ambiguity; updates approaches based on new information; resilient and iterative under change.',
+      }[dim] || '';
+    }
+  });
+  document.getElementById('y-score').textContent = '—';
+  document.getElementById('x-score').textContent = '—';
+  document.getElementById('y-score-badge').textContent = '—';
+  document.getElementById('x-score-badge').textContent = '—';
+  document.getElementById('add-btn').disabled = true;
+}
+</script>
+</body>
+</html>
