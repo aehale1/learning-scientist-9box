@@ -63,7 +63,9 @@ header p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
 .dim { margin-bottom: 12px; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
 .dim-header { padding: 8px 10px; background: #f9fafb; display: flex; justify-content: space-between; align-items: center; }
 .dim-label { font-size: 12px; font-weight: 600; color: #374151; }
-.btn-group { display: flex; gap: 4px; }
+.dim-label .dim-sub { font-weight: 500; color: #9ca3af; font-size: 11px; }
+.dim-header { gap: 8px; }
+.btn-group { display: flex; gap: 4px; flex-shrink: 0; }
 .btn-group button {
   width: 32px; height: 28px; border: 1.5px solid #d1d5db;
   border-radius: 5px; background: white; font-size: 12px; font-weight: 700;
@@ -252,74 +254,74 @@ tr:hover td { background: #fafafa; cursor: pointer; }
 
       <div class="dim">
         <div class="dim-header">
-          <span class="dim-label">Human</span>
+          <span class="dim-label">Human <span class="dim-sub">(people-centered)</span></span>
           <div class="btn-group">
             <button onclick="rate('human',1)" id="human-1">1</button>
             <button onclick="rate('human',2)" id="human-2">2</button>
             <button onclick="rate('human',3)" id="human-3">3</button>
           </div>
         </div>
-        <div class="dim-anchor" id="human-anchor">Centers the human experience of learners and stakeholders; bridges data and human insight.</div>
+        <div class="dim-anchor" id="human-anchor">Centers the experiences, needs, and perspectives of learners and stakeholders. Approaches work with empathy, curiosity, and respect for diverse lived experiences. Considers the human impact of decisions and bridges data, evidence, and human insight.</div>
       </div>
 
       <div class="dim">
         <div class="dim-header">
-          <span class="dim-label">Connected</span>
+          <span class="dim-label">Collaborative <span class="dim-sub">(relationship-oriented)</span></span>
           <div class="btn-group">
             <button onclick="rate('connected',1)" id="connected-1">1</button>
             <button onclick="rate('connected',2)" id="connected-2">2</button>
             <button onclick="rate('connected',3)" id="connected-3">3</button>
           </div>
         </div>
-        <div class="dim-anchor" id="connected-anchor">Builds and leverages a professional network inside and outside the organization.</div>
+        <div class="dim-anchor" id="connected-anchor">Builds and sustains reciprocal relationships that advance learning and collective success. Actively seeks diverse perspectives, works effectively with others, and contributes to environments of trust, shared ownership, and mutual accountability.</div>
       </div>
 
       <div class="dim">
         <div class="dim-header">
-          <span class="dim-label">Boundary Spanning</span>
+          <span class="dim-label">Boundary Spanning <span class="dim-sub">(integrative)</span></span>
           <div class="btn-group">
             <button onclick="rate('boundary',1)" id="boundary-1">1</button>
             <button onclick="rate('boundary',2)" id="boundary-2">2</button>
             <button onclick="rate('boundary',3)" id="boundary-3">3</button>
           </div>
         </div>
-        <div class="dim-anchor" id="boundary-anchor">Works fluidly across disciplines, teams, and organizational levels; translates between specialists.</div>
+        <div class="dim-anchor" id="boundary-anchor">Works fluidly across disciplines, teams, functions, and organizational levels. Connects ideas, people, and perspectives that might otherwise remain separate and translates effectively between different domains of expertise and practice.</div>
       </div>
 
       <div class="dim">
         <div class="dim-header">
-          <span class="dim-label">Expert Generalist</span>
+          <span class="dim-label">Expert Generalist <span class="dim-sub">(breadth/depth-oriented)</span></span>
           <div class="btn-group">
             <button onclick="rate('generalist',1)" id="generalist-1">1</button>
             <button onclick="rate('generalist',2)" id="generalist-2">2</button>
             <button onclick="rate('generalist',3)" id="generalist-3">3</button>
           </div>
         </div>
-        <div class="dim-anchor" id="generalist-anchor">Clear depth in a primary domain combined with genuine working knowledge across adjacent areas (T-shaped).</div>
+        <div class="dim-anchor" id="generalist-anchor">Demonstrates deep expertise in at least one area while maintaining working knowledge across adjacent domains. Integrates multiple perspectives, methods, and forms of expertise to address complex problems and identify opportunities that may not be visible within a single discipline.</div>
       </div>
 
       <div class="dim">
         <div class="dim-header">
-          <span class="dim-label">Connectivism</span>
+          <span class="dim-label">Connectivist <span class="dim-sub">(networked view of knowledge)</span></span>
           <div class="btn-group">
             <button onclick="rate('connectivism',1)" id="connectivism-1">1</button>
             <button onclick="rate('connectivism',2)" id="connectivism-2">2</button>
             <button onclick="rate('connectivism',3)" id="connectivism-3">3</button>
           </div>
         </div>
-        <div class="dim-anchor" id="connectivism-anchor">Treats knowledge as distributed; actively cultivates and contributes to communities of practice and knowledge networks.</div>
+        <div class="dim-anchor" id="connectivism-anchor">Views knowledge as distributed across people, communities, technologies, and information networks. Actively learns from and contributes to communities of practice, recognizing that expertise resides not only within individuals but also within relationships, tools, and collective intelligence.</div>
       </div>
 
       <div class="dim">
         <div class="dim-header">
-          <span class="dim-label">Adaptive</span>
+          <span class="dim-label">Adaptive <span class="dim-sub">(learning-oriented)</span></span>
           <div class="btn-group">
             <button onclick="rate('adaptive',1)" id="adaptive-1">1</button>
             <button onclick="rate('adaptive',2)" id="adaptive-2">2</button>
             <button onclick="rate('adaptive',3)" id="adaptive-3">3</button>
           </div>
         </div>
-        <div class="dim-anchor" id="adaptive-anchor">Thrives in ambiguity; updates approaches based on new information; resilient and iterative under change.</div>
+        <div class="dim-anchor" id="adaptive-anchor">Responds effectively to change, ambiguity, and emerging information. Tests assumptions, incorporates feedback, and adjusts approaches based on evidence and experience. Remains resilient, iterative, and committed to continuous learning and improvement.</div>
       </div>
 
       <div class="composite-row">
@@ -438,10 +440,10 @@ const DIMS = {
   foresight:    { label: 'Foresight',         axis: 'y' },
   expertise:    { label: 'Expertise',         axis: 'y' },
   human:        { label: 'Human',             axis: 'x' },
-  connected:    { label: 'Connected',         axis: 'x' },
+  connected:    { label: 'Collaborative',      axis: 'x' },
   boundary:     { label: 'Boundary Spanning', axis: 'x' },
   generalist:   { label: 'Expert Generalist', axis: 'x' },
-  connectivism: { label: 'Connectivism',      axis: 'x' },
+  connectivism: { label: 'Connectivist',       axis: 'x' },
   adaptive:     { label: 'Adaptive',          axis: 'x' },
 };
 
@@ -707,12 +709,12 @@ function resetForm() {
         context: 'Understands the broader organizational, industry, and field context in which work occurs. Connects current priorities to historical lessons, emerging trends, research, and external developments. Leverages knowledge of what has been tried before—both successes and failures—to inform decisions and identify opportunities. Uses evidence, benchmarking, and credible sources to deepen understanding, challenge assumptions, and help others see the bigger picture, while maintaining the awareness to situate that evidence within organizational, cultural, and systemic realities.',
         foresight: 'Anticipates needs, opportunities, risks, and challenges before they become apparent to others. Draws on deep expertise, experience, and pattern recognition to identify potential obstacles, dependencies, and unintended consequences early in the process. Challenges assumptions and asks thoughtful questions that clarify scope, surface hidden risks, and expand thinking. Looks beyond the immediate task or project, considering both short- and long-term implications of decisions and actions. Envisions desired future outcomes and works backward to identify the strategies, milestones, and resources needed to achieve them. Proactively prepares for what is likely to come next, helping others navigate complexity, avoid preventable problems, and successfully deliver results.',
         expertise: 'Demonstrates deep knowledge and proficiency in a specialized area of practice. Brings a strong command of the methods, frameworks, theories, tools, and/or technical skills that underpin high-quality work. Maintains and continuously develops professional expertise to stay current with evolving practices, technologies, and standards. Applies specialized knowledge to solve complex problems, produce rigorous work, and provide credible guidance to others. Expertise is the individual’s unique contribution—their “color in the crayon box”—that enables them to create value and advance the work with confidence and precision.',
-        human: 'Centers the human experience of learners and stakeholders; bridges data and human insight.',
-        connected: 'Builds and leverages a professional network inside and outside the organization.',
-        boundary: 'Works fluidly across disciplines, teams, and organizational levels; translates between specialists.',
-        generalist: 'Clear depth in a primary domain combined with genuine working knowledge across adjacent areas (T-shaped).',
-        connectivism: 'Treats knowledge as distributed; actively cultivates and contributes to communities of practice and knowledge networks.',
-        adaptive: 'Thrives in ambiguity; updates approaches based on new information; resilient and iterative under change.',
+        human: 'Centers the experiences, needs, and perspectives of learners and stakeholders. Approaches work with empathy, curiosity, and respect for diverse lived experiences. Considers the human impact of decisions and bridges data, evidence, and human insight.',
+        connected: 'Builds and sustains reciprocal relationships that advance learning and collective success. Actively seeks diverse perspectives, works effectively with others, and contributes to environments of trust, shared ownership, and mutual accountability.',
+        boundary: 'Works fluidly across disciplines, teams, functions, and organizational levels. Connects ideas, people, and perspectives that might otherwise remain separate and translates effectively between different domains of expertise and practice.',
+        generalist: 'Demonstrates deep expertise in at least one area while maintaining working knowledge across adjacent domains. Integrates multiple perspectives, methods, and forms of expertise to address complex problems and identify opportunities that may not be visible within a single discipline.',
+        connectivism: 'Views knowledge as distributed across people, communities, technologies, and information networks. Actively learns from and contributes to communities of practice, recognizing that expertise resides not only within individuals but also within relationships, tools, and collective intelligence.',
+        adaptive: 'Responds effectively to change, ambiguity, and emerging information. Tests assumptions, incorporates feedback, and adjusts approaches based on evidence and experience. Remains resilient, iterative, and committed to continuous learning and improvement.',
       }[dim] || '';
     }
   });
