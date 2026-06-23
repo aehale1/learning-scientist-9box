@@ -199,6 +199,19 @@ tr:hover td { background: #fafafa; cursor: pointer; }
 .remove-btn:hover { color: #ef4444; }
 
 .empty-state { padding: 24px; text-align: center; color: #9ca3af; font-size: 13px; }
+
+/* ── COLLECTIVE SUMMARY ── */
+.summary-section { background: white; border: 1px solid #e2e4ea; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; }
+.summary-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
+.summary-head h2 { font-size: 14px; font-weight: 700; color: #4f46e5; text-transform: uppercase; letter-spacing: 0.5px; }
+.summary-total { font-size: 12px; font-weight: 700; color: #6b7280; white-space: nowrap; }
+.summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 600px; }
+.summary-cell { border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 7px; min-height: 50px; display: flex; flex-direction: column; justify-content: space-between; }
+.sc-name { font-size: 10px; font-weight: 700; line-height: 1.2; }
+.sc-count { font-size: 17px; font-weight: 800; align-self: flex-end; }
+
+/* ── ADMIN BADGE ── */
+.admin-badge { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; border-radius: 12px; padding: 2px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
 </style>
 </head>
 <body>
@@ -373,6 +386,14 @@ tr:hover td { background: #fafafa; cursor: pointer; }
 
   <!-- RIGHT: Grid + Detail + Roster -->
   <div class="right-panel">
+    <div class="summary-section" id="summary-section">
+      <div class="summary-head">
+        <h2>Collective Snapshot</h2>
+        <span class="summary-total" id="summary-total">0 respondents</span>
+      </div>
+      <div class="summary-grid" id="summary-grid"></div>
+    </div>
+
     <div class="grid-and-detail">
 
       <!-- 9-Box Grid -->
@@ -470,6 +491,33 @@ tr:hover td { background: #fafafa; cursor: pointer; }
 
   </div><!-- /right-panel -->
 </div><!-- /app -->
+
+<!-- ── FIREBASE (compat SDK; config is public — access controlled by Firestore rules) ── -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCakO0RqkUJpw5LTAeS835ffLiRJQGXW1g",
+  authDomain: "ls-9block.firebaseapp.com",
+  projectId: "ls-9block",
+  storageBucket: "ls-9block.firebasestorage.app",
+  messagingSenderId: "813593721829",
+  appId: "1:813593721829:web:2c5eb1009c81a5aace4d0c"
+};
+// Admin link: append ?admin=k7q2zr9a to the URL to reveal remove/clear controls.
+const ADMIN_TOKEN = "k7q2zr9a";
+const isAdmin = new URLSearchParams(location.search).get('admin') === ADMIN_TOKEN;
+let db = null;
+const USE_FIREBASE = (typeof firebase !== 'undefined') && !!firebaseConfig.apiKey;
+if (USE_FIREBASE) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    // More reliable on restrictive networks/proxies (and headless browsers)
+    db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
+  } catch (e) { console.error('Firebase init failed:', e); }
+}
+</script>
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────
@@ -603,27 +651,72 @@ function addPerson() {
 
   const xBand = band(xScore);
   const yBand = band(yScore);
-  const archetype = ARCHETYPES[`${xBand},${yBand}`];
+  const archetypeKey = `${xBand},${yBand}`;
+  const archetype = ARCHETYPES[archetypeKey];
   const color = COLORS[people.length % COLORS.length];
+  const yS = +yScore.toFixed(2);
+  const xS = +xScore.toFixed(2);
 
   const person = {
     id: Date.now(),
     name,
     ratings: { ...ratings },
-    yScore: +yScore.toFixed(2),
-    xScore: +xScore.toFixed(2),
+    yScore: yS,
+    xScore: xS,
     xBand,
     yBand,
     archetype,
     color,
-    initials: name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)
+    initials: initialsFor(name)
   };
 
-  people.push(person);
-  renderGrid();
-  renderRoster();
-  showDetail(person);
-  resetForm();
+  if (USE_FIREBASE && db) {
+    db.collection('assessments').add({
+      name,
+      ratings: { ...ratings },
+      yScore: yS,
+      xScore: xS,
+      xBand,
+      yBand,
+      archetypeKey,
+      color,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(e => { console.error('Save failed:', e); alert('Could not save your assessment: ' + e.message); });
+    // The realtime listener will render it; show the result immediately for the submitter.
+    showDetail(person);
+    resetForm();
+  } else {
+    people.push(person);
+    renderGrid();
+    renderRoster();
+    renderSummary();
+    showDetail(person);
+    resetForm();
+  }
+}
+
+function initialsFor(name) {
+  return (name || '').split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0,2);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function docToPerson(doc) {
+  const d = doc.data() || {};
+  return {
+    id: doc.id,
+    name: d.name || '',
+    ratings: d.ratings || {},
+    yScore: d.yScore,
+    xScore: d.xScore,
+    xBand: d.xBand,
+    yBand: d.yBand,
+    archetype: ARCHETYPES[d.archetypeKey] || ARCHETYPES[`${d.xBand},${d.yBand}`],
+    color: d.color || '#6b7280',
+    initials: initialsFor(d.name)
+  };
 }
 
 // ── GRID ──────────────────────────────────────────────────────────
@@ -701,40 +794,95 @@ function renderRoster() {
   }
   let html = `<table>
     <thead><tr>
-      <th>Name</th><th>Capacity (Y)</th><th>Stance (X)</th><th>Archetype</th><th>Capacity Band</th><th>Stance Band</th><th></th>
+      <th>Name</th><th>Capacity (Y)</th><th>Stance (X)</th><th>Archetype</th><th>Capacity Band</th><th>Stance Band</th>${isAdmin ? '<th></th>' : ''}
     </tr></thead><tbody>`;
   people.forEach(p => {
-    html += `<tr onclick="showDetail(people.find(x=>x.id===${p.id}))">
-      <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:6px;"></span><strong>${p.name}</strong></td>
+    html += `<tr data-id="${p.id}">
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.color};margin-right:6px;"></span><strong>${escapeHtml(p.name)}</strong></td>
       <td>${p.yScore}</td>
       <td>${p.xScore}</td>
-      <td><strong>${p.archetype.name}</strong></td>
+      <td><strong>${escapeHtml(p.archetype.name)}</strong></td>
       <td>${bandTag(p.yBand)}</td>
       <td>${bandTag(p.xBand)}</td>
-      <td><button class="remove-btn" onclick="event.stopPropagation();removePerson(${p.id})">✕</button></td>
+      ${isAdmin ? `<td><button class="remove-btn" data-remove="${p.id}">✕</button></td>` : ''}
     </tr>`;
   });
   html += '</tbody></table>';
   body.innerHTML = html;
+
+  // String-safe handlers (Firestore ids are strings)
+  body.querySelectorAll('tbody tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const p = people.find(x => String(x.id) === tr.dataset.id);
+      if (p) showDetail(p);
+    });
+  });
+  body.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); removePerson(btn.dataset.remove); });
+  });
+}
+
+// ── COLLECTIVE SUMMARY (heatmap + total) ──────────────────────────
+function renderSummary() {
+  const totalEl = document.getElementById('summary-total');
+  const grid = document.getElementById('summary-grid');
+  if (!totalEl || !grid) return;
+  const total = people.length;
+  totalEl.textContent = total + (total === 1 ? ' respondent' : ' respondents');
+
+  const counts = {};
+  people.forEach(p => { const k = `${p.xBand},${p.yBand}`; counts[k] = (counts[k] || 0) + 1; });
+  const max = Math.max(1, ...Object.values(counts));
+
+  // Mirror the grid layout: capacity High→Low (y 3→1), stance Narrow→Spanning (x 1→3)
+  const order = [];
+  [3, 2, 1].forEach(y => [1, 2, 3].forEach(x => order.push([x, y])));
+  grid.innerHTML = order.map(([x, y]) => {
+    const k = `${x},${y}`;
+    const c = counts[k] || 0;
+    const a = ARCHETYPES[k];
+    const intensity = c === 0 ? 0 : 0.15 + 0.85 * (c / max);
+    const bg = c === 0 ? '#f9fafb' : `rgba(79,70,229,${intensity.toFixed(2)})`;
+    const fg = intensity > 0.55 ? '#fff' : '#374151';
+    return `<div class="summary-cell" style="background:${bg};color:${fg}">
+      <span class="sc-name">${escapeHtml(a.name)}</span><span class="sc-count">${c}</span></div>`;
+  }).join('');
 }
 
 function removePerson(id) {
-  people = people.filter(p => p.id !== id);
-  if (selectedPerson && selectedPerson.id === id) {
+  if (!isAdmin) return;
+  if (selectedPerson && String(selectedPerson.id) === String(id)) {
     document.getElementById('detail-card').classList.remove('visible');
     selectedPerson = null;
   }
-  renderGrid();
-  renderRoster();
+  if (USE_FIREBASE && db) {
+    db.collection('assessments').doc(id).delete().catch(e => console.error('Delete failed:', e));
+    // realtime listener re-renders
+  } else {
+    people = people.filter(p => String(p.id) !== String(id));
+    renderGrid();
+    renderRoster();
+    renderSummary();
+  }
 }
 
 function clearAll() {
-  if (!confirm('Clear all staff ratings from the grid?')) return;
-  people = [];
+  if (!isAdmin) return;
+  if (!confirm('Remove ALL entries for everyone? This cannot be undone.')) return;
   selectedPerson = null;
   document.getElementById('detail-card').classList.remove('visible');
-  renderGrid();
-  renderRoster();
+  if (USE_FIREBASE && db) {
+    db.collection('assessments').get().then(snap => {
+      const batch = db.batch();
+      snap.forEach(d => batch.delete(d.ref));
+      return batch.commit();
+    }).catch(e => console.error('Clear failed:', e));
+  } else {
+    people = [];
+    renderGrid();
+    renderRoster();
+    renderSummary();
+  }
 }
 
 // ── RESET FORM ────────────────────────────────────────────────────
@@ -758,6 +906,35 @@ function resetForm() {
   document.getElementById('x-score-badge').textContent = '—';
   document.getElementById('add-btn').disabled = true;
 }
+
+// ── INIT ──────────────────────────────────────────────────────────
+(function init() {
+  // Admin-only controls
+  const clearBtn = document.querySelector('.clear-btn');
+  if (clearBtn) clearBtn.style.display = isAdmin ? '' : 'none';
+  if (isAdmin) {
+    const head = document.querySelector('header > div');
+    if (head) {
+      const badge = document.createElement('span');
+      badge.className = 'admin-badge';
+      badge.textContent = 'Admin mode';
+      badge.style.marginTop = '6px';
+      badge.style.display = 'inline-block';
+      head.appendChild(badge);
+    }
+  }
+
+  renderSummary();
+
+  if (USE_FIREBASE && db) {
+    db.collection('assessments').orderBy('createdAt').onSnapshot(snap => {
+      people = snap.docs.map(docToPerson);
+      renderGrid();
+      renderRoster();
+      renderSummary();
+    }, err => console.error('Firestore listener error:', err));
+  }
+})();
 </script>
 </body>
 </html>
