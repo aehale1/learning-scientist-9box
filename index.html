@@ -220,11 +220,11 @@ tr:hover td { background: #fafafa; cursor: pointer; }
 
   <!-- LEFT: Form -->
   <div class="form-panel">
-    <h2>Rate a Person</h2>
+    <h2>Rate Yourself</h2>
 
     <div class="name-row">
-      <label>Name</label>
-      <input type="text" id="staff-name" placeholder="e.g. Jordan Smith">
+      <label>Name or label</label>
+      <input type="text" id="staff-name" placeholder="e.g. Me — June 2026">
     </div>
 
     <!-- AXIS 1: Professional Capacity -->
@@ -458,7 +458,7 @@ tr:hover td { background: #fafafa; cursor: pointer; }
         <button class="clear-btn" onclick="clearAll()">Clear all</button>
       </div>
       <div id="roster-body">
-        <div class="empty-state">No one rated yet. Use the form on the left to add people.</div>
+        <div class="empty-state">No ratings yet. Rate yourself using the form on the left — add more over time to track your growth.</div>
       </div>
     </div>
 
@@ -492,15 +492,15 @@ const ANCHORS = {
 };
 
 const ARCHETYPES = {
-  '1,1': { name: 'The Novice',      desc: 'Early in the learning science journey — building all foundations at once: context, expertise, and the collaborative, adaptive stances that bring them to life.', dev: '<strong>Development focus:</strong> Build technical foundations (methods, theory) with a mentor, and join cross-functional work early to grow collaborative and adaptive habits.' },
-  '2,1': { name: 'The Explorer',    desc: 'Curious and people-aware — already sees learning problems as human and connected, but doesn\'t yet have the expertise and context to act on that awareness with rigor.', dev: '<strong>Development focus:</strong> Channel curiosity into structured learning. Take on work that requires synthesizing data with human insight to build depth.' },
-  '3,1': { name: 'The Networker',   desc: 'Highly collaborative and trusted — builds reciprocal relationships and moves easily across teams and boundaries. Expertise and analytical depth are still thin, which limits the quality of the work produced.', dev: '<strong>Development focus:</strong> Ground strong relational instincts in rigorous methods. Invest in research design or technical skill-building to match reach with depth.' },
-  '1,2': { name: 'The Analyst',     desc: 'Technically solid — capable in analysis, methodology, or learning design — but works in a narrow lane, not yet drawing on collaboration, diverse perspectives, or distributed knowledge to amplify the work.', dev: '<strong>Development focus:</strong> Step beyond the solo lane. Take on cross-team work and build collaborative, connectivist habits — learning from and contributing to communities of practice.' },
-  '2,2': { name: 'The Practitioner',desc: 'The balanced, developing professional. Growing on both axes — solid enough to produce quality work and becoming more collaborative and adaptive. Clear paths forward in either direction.', dev: '<strong>Development focus:</strong> Identify the lagging axis and accelerate it with stretch assignments in the underdeveloped dimension.' },
-  '3,2': { name: 'The Translator',  desc: 'Exceptional at bridging — across teams, disciplines, and stakeholders — making insights accessible and actionable. Depth and rigor aren\'t fully there yet, which can limit credibility on complex analytical work.', dev: '<strong>Development focus:</strong> Pair with a deep expert and take on more rigorous research or technical challenges to build credibility behind the bridging.' },
-  '1,3': { name: 'The Expert',      desc: 'A deep subject-matter expert — strong in research, learning theory, or technical architecture — but impact is bounded by a specialist mode of working, with knowledge not yet shared through relationships and communities.', dev: '<strong>Development focus:</strong> Unlock leverage. Move into thought leadership, mentorship, or cross-team initiatives so the expertise reaches further through others.' },
-  '2,3': { name: 'The Researcher',  desc: 'High-capability professional with genuine analytical and contextual depth, and growing collaborative and adaptive breadth. Close to the target — likely needs sustained cross-boundary experience to fully arrive.', dev: '<strong>Development focus:</strong> Take on a stretch assignment that requires leading across functions or working with an unfamiliar stakeholder set.' },
-  '3,3': { name: 'The Architect',   desc: 'The target profile. Deep expertise paired with strong context, foresight, and the ability to collaborate, span boundaries, and translate across people, teams, and disciplines. Doesn\'t just produce insights — shapes how the field thinks.', dev: '<strong>Development focus:</strong> Retain and leverage. These are the mentors, thought leaders, and system designers — give them scope, not just tasks.' },
+  '1,1': { name: 'The Novice',      desc: 'You\'re early in your learning science journey — building all the foundations at once: context, expertise, and the collaborative, adaptive stances that bring them to life.', dev: '<strong>Your growth edge:</strong> Build your technical foundations (methods, theory) with a mentor, and get into cross-functional work early to grow collaborative and adaptive habits.' },
+  '2,1': { name: 'The Explorer',    desc: 'You\'re curious and people-aware — you already see learning problems as human and connected, but you don\'t yet have the expertise and context to act on that awareness with rigor.', dev: '<strong>Your growth edge:</strong> Channel your curiosity into structured learning. Take on work that makes you synthesize data with human insight to build depth.' },
+  '3,1': { name: 'The Networker',   desc: 'You\'re highly collaborative and trusted — you build reciprocal relationships and move easily across teams and boundaries. Your expertise and analytical depth are still thin, which limits the quality of what you produce.', dev: '<strong>Your growth edge:</strong> Ground your strong relational instincts in rigorous methods. Invest in research design or technical skill-building so your depth matches your reach.' },
+  '1,2': { name: 'The Analyst',     desc: 'You\'re technically solid — capable in analysis, methodology, or learning design — but you work in a narrow lane, not yet drawing on collaboration, diverse perspectives, or distributed knowledge to amplify your work.', dev: '<strong>Your growth edge:</strong> Step beyond the solo lane. Take on cross-team work and build collaborative, connectivist habits — learning from and contributing to communities of practice.' },
+  '2,2': { name: 'The Practitioner',desc: 'You\'re a balanced, developing professional, growing on both axes — solid enough to produce quality work and becoming more collaborative and adaptive, with clear paths forward in either direction.', dev: '<strong>Your growth edge:</strong> Spot your lagging axis and accelerate it — seek stretch assignments in the dimension you\'ve developed least.' },
+  '3,2': { name: 'The Translator',  desc: 'You\'re exceptional at bridging — across teams, disciplines, and stakeholders — making insights accessible and actionable. Your depth and rigor aren\'t fully there yet, which can limit your credibility on complex analytical work.', dev: '<strong>Your growth edge:</strong> Learn alongside a deep expert and take on more rigorous research or technical challenges to build the credibility behind your bridging.' },
+  '1,3': { name: 'The Expert',      desc: 'You\'re a deep subject-matter expert — strong in research, learning theory, or technical architecture — but your impact is bounded by a specialist way of working, with your knowledge not yet shared through relationships and communities.', dev: '<strong>Your growth edge:</strong> Unlock your leverage. Move into thought leadership, mentorship, or cross-team initiatives so your expertise reaches further through others.' },
+  '2,3': { name: 'The Researcher',  desc: 'You\'re a high-capability professional with genuine analytical and contextual depth, and growing collaborative and adaptive breadth. You\'re close to the target — you likely need sustained cross-boundary experience to fully arrive.', dev: '<strong>Your growth edge:</strong> Take on a stretch assignment that has you leading across functions or working with an unfamiliar stakeholder set.' },
+  '3,3': { name: 'The Architect',   desc: 'This is the target profile. You pair deep expertise with strong context, foresight, and the ability to collaborate, span boundaries, and translate across people, teams, and disciplines. You don\'t just produce insights — you shape how the field thinks.', dev: '<strong>Your growth edge:</strong> Keep seeking scope, not just tasks. Step into mentorship and system-shaping work, and keep sharpening the field around you.' },
 };
 
 // ── STATE ─────────────────────────────────────────────────────────
@@ -684,7 +684,7 @@ function bandTag(b) {
 function renderRoster() {
   const body = document.getElementById('roster-body');
   if (people.length === 0) {
-    body.innerHTML = '<div class="empty-state">No one rated yet. Use the form on the left to add people.</div>';
+    body.innerHTML = '<div class="empty-state">No ratings yet. Rate yourself using the form on the left — add more over time to track your growth.</div>';
     return;
   }
   let html = `<table>
