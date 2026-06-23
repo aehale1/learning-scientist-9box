@@ -220,10 +220,10 @@ tr:hover td { background: #fafafa; cursor: pointer; }
 
   <!-- LEFT: Form -->
   <div class="form-panel">
-    <h2>Rate a Staff Member</h2>
+    <h2>Rate a Person</h2>
 
     <div class="name-row">
-      <label>Staff Member Name</label>
+      <label>Name</label>
       <input type="text" id="staff-name" placeholder="e.g. Jordan Smith">
     </div>
 
@@ -371,7 +371,7 @@ tr:hover td { background: #fafafa; cursor: pointer; }
 
       <!-- 9-Box Grid -->
       <div class="grid-container">
-        <h2>Team Grid</h2>
+        <h2>Grid</h2>
         <div class="grid-outer">
           <div class="y-axis-label">Professional Capacity →</div>
           <div class="grid-inner">
@@ -454,11 +454,11 @@ tr:hover td { background: #fafafa; cursor: pointer; }
     <!-- Roster Table -->
     <div class="roster-section">
       <div class="roster-header">
-        <h2>Team Roster</h2>
+        <h2>Roster</h2>
         <button class="clear-btn" onclick="clearAll()">Clear all</button>
       </div>
       <div id="roster-body">
-        <div class="empty-state">No staff rated yet. Use the form on the left to add team members.</div>
+        <div class="empty-state">No one rated yet. Use the form on the left to add people.</div>
       </div>
     </div>
 
@@ -684,7 +684,7 @@ function bandTag(b) {
 function renderRoster() {
   const body = document.getElementById('roster-body');
   if (people.length === 0) {
-    body.innerHTML = '<div class="empty-state">No staff rated yet. Use the form on the left to add team members.</div>';
+    body.innerHTML = '<div class="empty-state">No one rated yet. Use the form on the left to add people.</div>';
     return;
   }
   let html = `<table>
