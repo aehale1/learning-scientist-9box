@@ -19,6 +19,26 @@ header {
 header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
 header p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
 
+/* ── HOW-TO GUIDE ── */
+.guide { background: white; border-bottom: 1px solid #e2e4ea; padding: 0 28px; }
+.guide > summary {
+  cursor: pointer; list-style: none; padding: 12px 0;
+  font-size: 13px; font-weight: 700; color: #4f46e5;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 8px;
+}
+.guide > summary::-webkit-details-marker { display: none; }
+.guide > summary::before { content: '\25B8'; transition: transform 0.15s; font-size: 11px; }
+.guide[open] > summary::before { transform: rotate(90deg); }
+.guide-body { padding: 0 0 18px; max-width: 1040px; font-size: 13px; line-height: 1.65; color: #374151; }
+.guide-lead { font-weight: 600; margin-bottom: 8px; }
+.guide-q { list-style: none; margin: 0 0 12px; padding: 0; }
+.guide-q li { padding: 4px 0 4px 18px; position: relative; }
+.guide-q li::before { content: '\2022'; position: absolute; left: 2px; color: #4f46e5; font-weight: 700; }
+.guide-q li span { color: #6b7280; font-size: 12px; font-weight: 500; }
+.guide-body p { margin-bottom: 8px; }
+.guide-body p:last-child { margin-bottom: 0; }
+
 .app { display: flex; gap: 0; min-height: calc(100vh - 56px); }
 
 /* ── LEFT PANEL ── */
@@ -183,6 +203,18 @@ tr:hover td { background: #fafafa; cursor: pointer; }
     <p>Manager rating tool · Rate each dimension 1–3 · Auto-places staff on the development grid</p>
   </div>
 </header>
+
+<details class="guide" open>
+  <summary>How to use this framework</summary>
+  <div class="guide-body">
+    <p class="guide-lead">This framework is a tool for reflection, growth, and self-assessment. It centers on two questions:</p>
+    <ul class="guide-q">
+      <li><strong>What capabilities do you possess?</strong> <span>(Y-axis)</span></li>
+      <li><strong>How do you engage and apply those capabilities?</strong> <span>(X-axis)</span></li>
+    </ul>
+    <p>It helps learning scientists examine not just the capabilities they hold, but how they put them into practice. The <strong>Y-axis—Context, Foresight, and Expertise—</strong>represents the depth of capacity required to understand learning environments, anticipate future opportunities and challenges, and contribute specialized knowledge. The <strong>X-axis—Human, Collaborative, Boundary Spanning, Expert Generalist, Connectivist, and Adaptive—</strong>represents the stances through which that capacity is expressed. Together, these dimensions provide a holistic view of professional growth, helping individuals identify strengths, surface developmental opportunities, and chart a path from novice practitioner toward increasingly sophisticated, impactful learning science practice. In an era shaped by AI, the framework also encourages practitioners to reflect on which capabilities can be augmented by technology and which human-centered stances remain essential for making sense of complex learning systems and creating meaningful change.</p>
+  </div>
+</details>
 
 <div class="app">
 
