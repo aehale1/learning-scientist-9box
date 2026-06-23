@@ -405,17 +405,17 @@ tr:hover td { background: #fafafa; cursor: pointer; }
 
                   <!-- Cell labels -->
                   <text x="65"  y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#1b5e4a">The Expert</text>
-                  <text x="195" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#1a2d8f">The Researcher</text>
-                  <text x="325" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="white">The Architect</text>
+                  <text x="195" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#1a2d8f">The Scholar</text>
+                  <text x="325" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="white">The Orchestrator</text>
                   <text x="325" y="35" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">⭐ Target</text>
 
-                  <text x="65"  y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#2d6a4f">The Analyst</text>
+                  <text x="65"  y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#2d6a4f">The Specialist</text>
                   <text x="195" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#1e5f8a">The Practitioner</text>
                   <text x="325" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#1a3a8f">The Translator</text>
 
-                  <text x="65"  y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#555">The Novice</text>
+                  <text x="65"  y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#555">The Apprentice</text>
                   <text x="195" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#4a5568">The Explorer</text>
-                  <text x="325" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#3a4a7a">The Networker</text>
+                  <text x="325" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#3a4a7a">The Connector</text>
 
                   <!-- Mid divider lines (darker) -->
                   <line x1="130" y1="0" x2="130" y2="300" stroke="#aaa" stroke-width="1.5"/>
@@ -498,15 +498,15 @@ const ANCHORS = {
 };
 
 const ARCHETYPES = {
-  '1,1': { name: 'The Novice',      desc: 'You\'re early in your learning science journey — building all the foundations at once: context, expertise, and the collaborative, adaptive stances that bring them to life.', dev: '<strong>Your growth edge:</strong> Build your technical foundations (methods, theory) with a mentor, and get into cross-functional work early to grow collaborative and adaptive habits.' },
+  '1,1': { name: 'The Apprentice',      desc: 'You\'re early in your learning science journey — building all the foundations at once: context, expertise, and the collaborative, adaptive stances that bring them to life.', dev: '<strong>Your growth edge:</strong> Build your technical foundations (methods, theory) with a mentor, and get into cross-functional work early to grow collaborative and adaptive habits.' },
   '2,1': { name: 'The Explorer',    desc: 'You\'re curious and people-aware — you already see learning problems as human and connected, but you don\'t yet have the expertise and context to act on that awareness with rigor.', dev: '<strong>Your growth edge:</strong> Channel your curiosity into structured learning. Take on work that makes you synthesize data with human insight to build depth.' },
-  '3,1': { name: 'The Networker',   desc: 'You\'re highly collaborative and trusted — you build reciprocal relationships and move easily across teams and boundaries. Your expertise and analytical depth are still thin, which limits the quality of what you produce.', dev: '<strong>Your growth edge:</strong> Ground your strong relational instincts in rigorous methods. Invest in research design or technical skill-building so your depth matches your reach.' },
-  '1,2': { name: 'The Analyst',     desc: 'You\'re technically solid — capable in analysis, methodology, or learning design — but you work in a narrow lane, not yet drawing on collaboration, diverse perspectives, or distributed knowledge to amplify your work.', dev: '<strong>Your growth edge:</strong> Step beyond the solo lane. Take on cross-team work and build collaborative, connectivist habits — learning from and contributing to communities of practice.' },
+  '3,1': { name: 'The Connector',   desc: 'You\'re highly collaborative and trusted — you build reciprocal relationships and move easily across teams and boundaries. Your expertise and analytical depth are still thin, which limits the quality of what you produce.', dev: '<strong>Your growth edge:</strong> Ground your strong relational instincts in rigorous methods. Invest in research design or technical skill-building so your depth matches your reach.' },
+  '1,2': { name: 'The Specialist',     desc: 'You\'re technically solid — capable in analysis, methodology, or learning design — but you work in a narrow lane, not yet drawing on collaboration, diverse perspectives, or distributed knowledge to amplify your work.', dev: '<strong>Your growth edge:</strong> Step beyond the solo lane. Take on cross-team work and build collaborative, connectivist habits — learning from and contributing to communities of practice.' },
   '2,2': { name: 'The Practitioner',desc: 'You\'re a balanced, developing professional, growing on both axes — solid enough to produce quality work and becoming more collaborative and adaptive, with clear paths forward in either direction.', dev: '<strong>Your growth edge:</strong> Spot your lagging axis and accelerate it — seek stretch assignments in the dimension you\'ve developed least.' },
   '3,2': { name: 'The Translator',  desc: 'You\'re exceptional at bridging — across teams, disciplines, and stakeholders — making insights accessible and actionable. Your depth and rigor aren\'t fully there yet, which can limit your credibility on complex analytical work.', dev: '<strong>Your growth edge:</strong> Learn alongside a deep expert and take on more rigorous research or technical challenges to build the credibility behind your bridging.' },
   '1,3': { name: 'The Expert',      desc: 'You\'re a deep subject-matter expert — strong in research, learning theory, or technical architecture — but your impact is bounded by a specialist way of working, with your knowledge not yet shared through relationships and communities.', dev: '<strong>Your growth edge:</strong> Unlock your leverage. Move into thought leadership, mentorship, or cross-team initiatives so your expertise reaches further through others.' },
-  '2,3': { name: 'The Researcher',  desc: 'You\'re a high-capability professional with genuine analytical and contextual depth, and growing collaborative and adaptive breadth. You\'re close to the target — you likely need sustained cross-boundary experience to fully arrive.', dev: '<strong>Your growth edge:</strong> Take on a stretch assignment that has you leading across functions or working with an unfamiliar stakeholder set.' },
-  '3,3': { name: 'The Architect',   desc: 'This is the target profile. You pair deep expertise with strong context, foresight, and the ability to collaborate, span boundaries, and translate across people, teams, and disciplines. You don\'t just produce insights — you shape how the field thinks.', dev: '<strong>Your growth edge:</strong> Keep seeking scope, not just tasks. Step into mentorship and system-shaping work, and keep sharpening the field around you.' },
+  '2,3': { name: 'The Scholar',  desc: 'You\'re a high-capability professional with genuine analytical and contextual depth, and growing collaborative and adaptive breadth. You\'re close to the target — you likely need sustained cross-boundary experience to fully arrive.', dev: '<strong>Your growth edge:</strong> Take on a stretch assignment that has you leading across functions or working with an unfamiliar stakeholder set.' },
+  '3,3': { name: 'The Orchestrator',   desc: 'This is the target profile. You pair deep expertise with strong context, foresight, and the ability to collaborate, span boundaries, and translate across people, teams, and disciplines. You don\'t just produce insights — you shape how the field thinks.', dev: '<strong>Your growth edge:</strong> Keep seeking scope, not just tasks. Step into mentorship and system-shaping work, and keep sharpening the field around you.' },
 };
 
 // ── STATE ─────────────────────────────────────────────────────────
