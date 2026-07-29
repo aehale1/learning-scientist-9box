@@ -123,6 +123,12 @@
   }
   .btn:active{transform:translateY(2px)}
   .btn.ghost{background:transparent}
+  .btn.sound{flex:0 0 56px;font-size:22px}
+  .slot.megaslot{border:2px dashed var(--sun);background:#31240f}
+  .slot.megaslot.empty::after{content:"M";color:var(--sun);font-size:16px}
+  .reward.megaGlow{background:radial-gradient(600px 500px at 50% 40%, #8a5a00 0%, #4a1d8a99 55%, #1a0f3dee 100%)}
+  .reward.megaGlow .monster{width:240px;height:240px;filter:drop-shadow(0 0 30px #ffd23fcc) drop-shadow(0 14px 22px #000a)}
+  .reward.megaGlow .mname{color:var(--sun);text-shadow:0 0 18px #ffd23f88}
 
   /* Reward overlay */
   .reward{
@@ -195,13 +201,14 @@
   </div>
 
   <div class="dex">
-    <h2>Monster Dex <span id="dexCount">0 / 12 caught</span></h2>
+    <h2>Monster Dex <span id="dexCount">0 / 24 caught</span></h2>
     <div class="dexgrid" id="dexgrid"></div>
   </div>
 
   <div class="bar">
     <button class="btn ghost" id="changeMode">Change tables</button>
     <button class="btn" id="resetBtn">Reset game</button>
+    <button class="btn sound" id="muteBtn" aria-label="Toggle sound">🔊</button>
   </div>
 </div>
 
@@ -209,7 +216,7 @@
 <div class="reward" id="reward">
   <div class="ray"></div>
   <div class="rewardcard">
-    <div class="caught">✦ You caught a monster! ✦</div>
+    <div class="caught" id="caughtLabel">✦ You caught a monster! ✦</div>
     <div class="monster" id="rewardMonster"></div>
     <div class="mname" id="rewardName">—</div>
     <div class="mtype" id="rewardType">—</div>
@@ -223,7 +230,7 @@
   <div class="startcard">
     <div class="demorow" id="demoRow"></div>
     <div class="big">Math&nbsp;Monsters</div>
-    <div class="sub">Answer the times-table question. Get it right, catch a monster!</div>
+    <div class="sub">Answer the times-table question. Get it right, catch a monster!<br><b style="color:var(--sun)">🔥 Get 3 in a row to catch a MEGA monster!</b></div>
     <div>
       <div class="hint" style="margin-bottom:8px">Pick a times table to practice</div>
       <div class="modes" id="modes"></div>
@@ -251,7 +258,19 @@
     {name:"Sunbud",    type:"Sun",    body:"#ffc53d", belly:"#fff0c2", accent:"#ff8a00", feat:"petals"},
     {name:"Frostbit",  type:"Ice",    body:"#8fd0ff", belly:"#e6f6ff", accent:"#3a8fe0", feat:"spikes"},
     {name:"Cocomon",   type:"Earth",  body:"#c58a5a", belly:"#f0d9bf", accent:"#8a5a30", feat:"earsR"},
-    {name:"Glimmstar", type:"Cosmic", body:"#e05bff", belly:"#f6d3ff", accent:"#9b1fd6", feat:"star"}
+    {name:"Glimmstar", type:"Cosmic", body:"#e05bff", belly:"#f6d3ff", accent:"#9b1fd6", feat:"star"},
+    {name:"Puffwing",  type:"Sky",    body:"#7fb8ff", belly:"#eaf4ff", accent:"#3d7fe0", feat:"wings"},
+    {name:"Grumblit",  type:"Boulder",body:"#9a8f7a", belly:"#e3dccb", accent:"#5f5540", feat:"spikes"},
+    {name:"Wispurr",   type:"Ghost",  body:"#b9a8e8", belly:"#efe8ff", accent:"#7a5fd0", feat:"antenna"},
+    {name:"Flarepup",  type:"Blaze",  body:"#ff4747", belly:"#ffd9c2", accent:"#ffae00", feat:"flame"},
+    {name:"Thornbud",  type:"Bramble",body:"#6fae3e", belly:"#e2f7c8", accent:"#3e7a1e", feat:"leaf"},
+    {name:"Jellybean", type:"Bubble", body:"#5fd8e8", belly:"#e0fbff", accent:"#1fa8c0", feat:"fin"},
+    {name:"Mega Embertail", type:"Fire",   body:"#ff3d00", belly:"#ffe0a3", accent:"#ffd23f", feat:"horn",    mega:true},
+    {name:"Mega Sparkodo",  type:"Volt",   body:"#ffea00", belly:"#fffbd0", accent:"#ff5d00", feat:"bolt",    mega:true},
+    {name:"Mega Aquapup",   type:"Water",  body:"#0077ff", belly:"#c8ecff", accent:"#00e5ff", feat:"fin",     mega:true},
+    {name:"Mega Violuff",   type:"Dream",  body:"#7a2bff", belly:"#eadcff", accent:"#ff5d8f", feat:"earsT",   mega:true},
+    {name:"Mega Mintling",  type:"Frost",  body:"#00e5c0", belly:"#e0fff8", accent:"#0077ff", feat:"antenna", mega:true},
+    {name:"Mega Glimmstar", type:"Cosmic", body:"#ff2bd6", belly:"#ffdcf8", accent:"#ffd23f", feat:"star",    mega:true}
   ];
 
   // ---- SVG creature generator ----
@@ -268,9 +287,25 @@
     else if(c.feat==="antenna") feat='<line x1="60" y1="30" x2="60" y2="8" stroke="'+a+'" stroke-width="4"/><circle cx="60" cy="6" r="6" fill="'+a+'"/>';
     else if(c.feat==="petals") feat='<circle cx="46" cy="24" r="9" fill="'+a+'"/><circle cx="74" cy="24" r="9" fill="'+a+'"/><circle cx="60" cy="16" r="9" fill="'+a+'"/>';
     else if(c.feat==="star") feat='<line x1="60" y1="30" x2="60" y2="12" stroke="'+a+'" stroke-width="4"/><path d="M60 2 L63 10 L71 10 L64 15 L67 23 L60 18 L53 23 L56 15 L49 10 L57 10 Z" fill="'+a+'"/>';
+    else if(c.feat==="wings") feat='<path d="M26 60 C4 40 6 24 30 36 C38 40 40 50 38 58 Z" fill="'+a+'"/><path d="M94 60 C116 40 114 24 90 36 C82 40 80 50 82 58 Z" fill="'+a+'"/>';
+    else if(c.feat==="flame") feat='<path d="M60 2 C52 14 66 16 60 30 C74 26 70 12 60 2 Z" fill="'+a+'"/><path d="M48 12 C44 20 52 22 48 32 C58 28 55 17 48 12 Z" fill="'+a+'" opacity=".8"/>';
+
+    var aura="";
+    if(c.mega){
+      aura='<circle cx="60" cy="64" r="57" fill="'+a+'" opacity=".16"/>'+
+           '<circle cx="60" cy="64" r="48" fill="'+a+'" opacity=".14"/>'+
+           '<path d="M10 30 L14 38 L22 40 L14 44 L10 52 L6 44 L-2 40 L6 38 Z" fill="'+a+'"/>'+
+           '<path d="M104 22 L108 30 L116 32 L108 36 L104 44 L100 36 L92 32 L100 30 Z" fill="'+a+'"/>'+
+           '<path d="M100 96 L103 102 L109 104 L103 106 L100 112 L97 106 L91 104 L97 102 Z" fill="'+a+'"/>';
+    }
+    var brows = c.mega
+      ? '<line x1="40" y1="47" x2="54" y2="52" stroke="#241a3a" stroke-width="3.4" stroke-linecap="round"/>'+
+        '<line x1="80" y1="47" x2="66" y2="52" stroke="#241a3a" stroke-width="3.4" stroke-linecap="round"/>'
+      : '';
 
     return ''+
     '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+c.name+', a '+c.type+' type monster">'+
+      aura+
       '<ellipse cx="46" cy="112" rx="12" ry="6" fill="'+a+'"/>'+
       '<ellipse cx="74" cy="112" rx="12" ry="6" fill="'+a+'"/>'+
       feat+
@@ -284,6 +319,7 @@
       '<circle cx="72" cy="62" r="5" fill="#241a3a"/>'+
       '<circle cx="52" cy="60" r="1.8" fill="#fff"/>'+
       '<circle cx="74" cy="60" r="1.8" fill="#fff"/>'+
+      brows+
       '<ellipse cx="40" cy="74" rx="6" ry="4" fill="'+a+'" opacity=".55"/>'+
       '<ellipse cx="80" cy="74" rx="6" ry="4" fill="'+a+'" opacity=".55"/>'+
       '<path d="M54 74 Q60 80 66 74" stroke="#241a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>'+
@@ -291,19 +327,52 @@
   }
 
   var CHEERS=["Awesome!","You're on fire!","Great thinking!","Math wizard!","Boom! Nailed it!","Super smart!","Way to go!","Genius move!","Perfect!","Unstoppable!"];
+  var MEGA_CHEERS=["MEGA CATCH!!","UNBELIEVABLE!!","LEGENDARY!!","MEGA POWER!!","3 IN A ROW — MEGA!!"];
 
   // ---- State ----
-  var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0};
+  var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0,muted:false};
+
+  // ---- Sound effects (Web Audio, no files needed) ----
+  var AC=null;
+  function audio(){
+    if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){AC=null;}}
+    if(AC&&AC.state==="suspended")AC.resume();
+    return AC;
+  }
+  function tone(freq,start,dur,type,vol){
+    var ac=audio(); if(!ac||state.muted) return;
+    var o=ac.createOscillator(),g=ac.createGain();
+    o.type=type||"square"; o.frequency.value=freq;
+    var t=ac.currentTime+start;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol||0.15,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t+dur+0.05);
+  }
+  function sfxTap(){tone(660,0,0.06,"square",0.07);}
+  function sfxCorrect(){[523,659,784,1047].forEach(function(f,i){tone(f,i*0.09,0.16,"square",0.14);});}
+  function sfxWrong(){tone(196,0,0.22,"sawtooth",0.11);tone(147,0.13,0.32,"sawtooth",0.11);}
+  function sfxCatch(){[392,523,659,784,1047,1319].forEach(function(f,i){tone(f,i*0.08,0.18,"triangle",0.18);});}
+  function sfxMega(){
+    [262,330,392,523,659,784,1047,1319,1568].forEach(function(f,i){
+      tone(f,i*0.07,0.22,"sawtooth",0.10);
+      tone(f*2,i*0.07,0.15,"triangle",0.09);
+    });
+    tone(2093,0.65,0.5,"triangle",0.12);
+  }
 
   // ---- Build Dex slots ----
   var dexgrid=$("#dexgrid");
   for(var i=0;i<CREATURES.length;i++){
     var s=document.createElement("div");
-    s.className="slot empty";s.dataset.idx=i;dexgrid.appendChild(s);
+    s.className="slot empty"+(CREATURES[i].mega?" megaslot":"");
+    s.dataset.idx=i;dexgrid.appendChild(s);
   }
+  $("#dexCount").textContent="0 / "+CREATURES.length+" caught";
   // Demo creatures on start screen
   var demo=$("#demoRow");
-  [0,4,8,11].forEach(function(i){var d=document.createElement("div");d.innerHTML=svgCreature(CREATURES[i]);demo.appendChild(d);});
+  [0,4,11,23].forEach(function(i){var d=document.createElement("div");d.innerHTML=svgCreature(CREATURES[i]);demo.appendChild(d);});
 
   // ---- Mode picker ----
   var modes=$("#modes");
@@ -317,6 +386,7 @@
   }
   modes.addEventListener("click",function(e){
     var btn=e.target.closest(".mode"); if(!btn) return;
+    sfxTap();
     state.mode=btn.dataset.mode;
     modes.querySelectorAll(".mode").forEach(function(x){x.setAttribute("aria-pressed", x===btn?"true":"false");});
   });
@@ -370,12 +440,14 @@
       state.right++; state.streak++;
       $("#sRight").textContent=state.right;
       updateStreak();
+      sfxCorrect();
       fb.className="feedback show good";fb.textContent="Correct! "+state.a+" × "+state.b+" = "+state.correct;
-      setTimeout(reward, 350);
+      setTimeout(reward, 450);
     }else{
       state.wrong++; state.streak=0;
       $("#sWrong").textContent=state.wrong;
       updateStreak();
+      sfxWrong();
       btn.classList.add("wrong");
       $("#card").classList.add("shake");
       setTimeout(function(){$("#card").classList.remove("shake");},400);
@@ -386,20 +458,27 @@
 
   function updateStreak(){
     var s=$("#streak");
-    if(state.streak>=2){s.textContent="🔥 Streak "+state.streak;s.classList.add("on");}
-    else{s.classList.remove("on");}
+    if(state.streak>0){
+      s.textContent = (state.streak%3===0) ? "🔥 Streak "+state.streak+" — MEGA!" : "🔥 "+(state.streak%3)+"/3 to MEGA";
+      s.classList.add("on");
+    }else{s.classList.remove("on");}
   }
 
   function reward(){
-    // pick an uncaught monster; if all caught, pick random
-    var remaining=[];
-    for(var i=0;i<CREATURES.length;i++) if(state.caught.indexOf(i)<0) remaining.push(i);
-    var idx = remaining.length ? remaining[randInt(0,remaining.length-1)] : randInt(0,CREATURES.length-1);
+    // every 3rd correct answer in a row earns a MEGA
+    var megaTurn = state.streak>0 && state.streak%3===0;
+    var pick=[], backup=[];
+    for(var i=0;i<CREATURES.length;i++){
+      var isMega=!!CREATURES[i].mega;
+      var uncaught=state.caught.indexOf(i)<0;
+      if(isMega===megaTurn){ (uncaught?pick:backup).push(i); }
+    }
+    var from = pick.length?pick:backup;
+    var idx = from[randInt(0,from.length-1)];
     var c=CREATURES[idx];
     var isNew=state.caught.indexOf(idx)<0;
     if(isNew){
       state.caught.push(idx);
-      state.right; // no-op
       $("#sCaught").textContent=state.caught.length;
       var slot=dexgrid.querySelector('.slot[data-idx="'+idx+'"]');
       slot.classList.remove("empty");slot.classList.add("new");
@@ -408,31 +487,46 @@
     }
     $("#rewardMonster").innerHTML=svgCreature(c);
     $("#rewardName").textContent=c.name;
-    $("#rewardType").textContent=(isNew?"NEW! ":"")+c.type+" type";
-    $("#rewardCheer").textContent=CHEERS[randInt(0,CHEERS.length-1)];
-    $("#reward").classList.add("show");
+    $("#rewardType").textContent=(isNew?"NEW! ":"")+c.type+" type"+(c.mega?" · MEGA":"");
+    $("#rewardCheer").textContent=c.mega ? MEGA_CHEERS[randInt(0,MEGA_CHEERS.length-1)] : CHEERS[randInt(0,CHEERS.length-1)];
+    var rc=$("#reward");
+    rc.classList.toggle("megaGlow",!!c.mega);
+    rc.classList.add("show");
+    $("#caughtLabel").textContent=c.mega?"✦ MEGA MONSTER CAUGHT! ✦":"✦ You caught a monster! ✦";
+    if(c.mega) sfxMega(); else sfxCatch();
   }
 
   // ---- Buttons ----
-  $("#nextBtn").addEventListener("click",newQuestion);
+  $("#nextBtn").addEventListener("click",function(){sfxTap();newQuestion();});
   $("#rewardNext").addEventListener("click",function(){
+    sfxTap();
     $("#reward").classList.remove("show");
     dexgrid.querySelectorAll(".slot.new").forEach(function(s){s.classList.remove("new");});
     newQuestion();
   });
   $("#goBtn").addEventListener("click",function(){
+    sfxTap();
     $("#start").classList.add("hide");
     newQuestion();
   });
   $("#changeMode").addEventListener("click",function(){
+    sfxTap();
     $("#start").classList.remove("hide");
+  });
+  $("#muteBtn").addEventListener("click",function(){
+    state.muted=!state.muted;
+    this.textContent=state.muted?"🔇":"🔊";
+    if(!state.muted) sfxTap();
   });
   $("#resetBtn").addEventListener("click",function(){
     if(!confirm("Start a brand new game? This clears your score and monsters.")) return;
     state.right=0;state.wrong=0;state.caught=[];state.streak=0;
     $("#sRight").textContent="0";$("#sWrong").textContent="0";$("#sCaught").textContent="0";
     $("#dexCount").textContent="0 / "+CREATURES.length+" caught";
-    dexgrid.querySelectorAll(".slot").forEach(function(s){s.className="slot empty";s.innerHTML="";});
+    dexgrid.querySelectorAll(".slot").forEach(function(s){
+      var isMega=!!CREATURES[parseInt(s.dataset.idx,10)].mega;
+      s.className="slot empty"+(isMega?" megaslot":"");s.innerHTML="";
+    });
     updateStreak();
     $("#start").classList.remove("hide");
   });
