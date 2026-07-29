@@ -6,14 +6,14 @@
 <title>Math Monsters</title>
 <style>
   :root{
-    --night:#1a0f3d;
-    --night2:#2b1666;
-    --panel:#34206e;
-    --panel2:#42298a;
-    --ink:#fff4ff;
-    --muted:#c3aef0;
+    --night:#07182f;
+    --night2:#0d2b56;
+    --panel:#123564;
+    --panel2:#1a447e;
+    --ink:#f2f8ff;
+    --muted:#9fc4ec;
     --sun:#ffd23f;
-    --hotpink:#ff5d8f;
+    --hotpink:#ff8c1f;
     --aqua:#33e6c9;
     --lime:#9bff5c;
     --good:#3ddc84;
@@ -88,13 +88,13 @@
   .answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .ans{
     min-height:var(--tap);border:none;border-radius:18px;cursor:pointer;
-    font-family:inherit;font-size:30px;font-weight:900;color:#25104a;
-    background:linear-gradient(180deg,#fff,#e9e0ff);
-    box-shadow:0 6px 0 #a892e0, 0 10px 18px -8px #000a;
+    font-family:inherit;font-size:30px;font-weight:900;color:#0a2a4d;
+    background:linear-gradient(180deg,#fff,#dcecff);
+    box-shadow:0 6px 0 #7fa8d8, 0 10px 18px -8px #000a;
     transition:transform .07s ease, box-shadow .07s ease, background .2s;
     font-variant-numeric:tabular-nums;user-select:none;
   }
-  .ans:active{transform:translateY(4px);box-shadow:0 2px 0 #a892e0}
+  .ans:active{transform:translateY(4px);box-shadow:0 2px 0 #7fa8d8}
   .ans:disabled{cursor:default}
   .ans.correct{background:linear-gradient(180deg,#8bffb0,#3ddc84);color:#093d1f;box-shadow:0 6px 0 #1f9d59}
   .ans.wrong{background:linear-gradient(180deg,#ffb0b0,#ff6b6b);color:#4d0a0a;box-shadow:0 6px 0 #c23b3b}
@@ -106,7 +106,7 @@
 
   .next{
     align-self:stretch;min-height:56px;border:none;border-radius:16px;cursor:pointer;
-    font-family:inherit;font-weight:900;font-size:20px;color:#2a0e4a;
+    font-family:inherit;font-weight:900;font-size:20px;color:#4a2f06;
     background:linear-gradient(180deg,var(--sun),#ffb020);
     box-shadow:0 6px 0 #c78412;letter-spacing:.3px;display:none;
   }
@@ -119,9 +119,9 @@
   .dex h2{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline}
   .dex h2 span{font-size:12px;color:var(--sun);font-weight:800;letter-spacing:.3px;font-variant-numeric:tabular-nums}
   .dexgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:10px}
-  .slot{aspect-ratio:1;border-radius:10px;background:#241249;border:1px dashed #4a2f8a;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+  .slot{aspect-ratio:1;border-radius:10px;background:#0d2547;border:1px dashed #2a5288;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
   .slot svg{width:100%;height:100%}
-  .slot.empty::after{content:"?";color:#5a3ea8;font-weight:900;font-size:14px}
+  .slot.empty::after{content:"?";color:#3a6cb0;font-weight:900;font-size:14px}
   .slot.new{animation:pop .5s ease}
   .slot.megaslot{border:2px dashed var(--sun);background:#31240f}
   .slot.megaslot.empty::after{content:"M";color:var(--sun);font-size:12px}
@@ -143,8 +143,8 @@
   .overlay.show{display:flex}
 
   /* Reward */
-  .reward{z-index:20;background:radial-gradient(600px 500px at 50% 40%, #4a1d8a 0%, #1a0f3daa 60%, #1a0f3dee 100%);backdrop-filter:blur(3px)}
-  .reward.megaGlow{background:radial-gradient(600px 500px at 50% 40%, #8a5a00 0%, #4a1d8a99 55%, #1a0f3dee 100%)}
+  .reward{z-index:20;background:radial-gradient(600px 500px at 50% 40%, #1a4d8a 0%, #07182faa 60%, #07182fee 100%);backdrop-filter:blur(3px)}
+  .reward.megaGlow{background:radial-gradient(600px 500px at 50% 40%, #8a5a00 0%, #1a4d8a99 55%, #07182fee 100%)}
   .rewardcard{
     text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:340px;width:100%;
     animation:rise .4s cubic-bezier(.2,1.3,.5,1) both;
@@ -161,21 +161,21 @@
   .ray{position:absolute;inset:0;background:conic-gradient(from 0deg, #ffd23f22 0 12deg, transparent 12deg 30deg, #ff5d8f22 30deg 42deg, transparent 42deg 60deg);animation:spin 12s linear infinite;pointer-events:none}
 
   /* Table picker */
-  .start{z-index:30;background:radial-gradient(700px 600px at 50% 30%, #3a1a7e, #1a0f3dee 70%)}
+  .start{z-index:30;background:radial-gradient(700px 600px at 50% 30%, #143f7e, #07182fee 70%)}
   .startcard{max-width:400px;width:100%;text-align:center;display:flex;flex-direction:column;gap:16px;margin:auto}
   .startcard .big{font-size:36px;font-weight:900;letter-spacing:-1px;line-height:1.05}
   .startcard .sub{color:var(--muted);font-size:15px;font-weight:600;margin-top:-8px}
   .modes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-  .mode{min-height:52px;border:2px solid #5a3ea8;border-radius:14px;background:#2b1666;color:var(--ink);font-family:inherit;font-weight:900;font-size:18px;cursor:pointer;font-variant-numeric:tabular-nums}
-  .mode.mix{grid-column:span 4;background:linear-gradient(180deg,var(--hotpink),#d23b6d);border-color:#ff9dbc;font-size:18px}
-  .mode[aria-pressed="true"]{background:linear-gradient(180deg,var(--sun),#ffb020);color:#2a0e4a;border-color:#fff}
+  .mode{min-height:52px;border:2px solid #3a6cb0;border-radius:14px;background:#0d2b56;color:var(--ink);font-family:inherit;font-weight:900;font-size:18px;cursor:pointer;font-variant-numeric:tabular-nums}
+  .mode.mix{grid-column:span 4;background:linear-gradient(180deg,var(--hotpink),#d96a0e);border-color:#ffc46b;font-size:18px}
+  .mode[aria-pressed="true"]{background:linear-gradient(180deg,var(--sun),#ffb020);color:#4a2f06;border-color:#fff}
   .go{min-height:62px;border:none;border-radius:18px;font-family:inherit;font-weight:900;font-size:24px;color:#093d1f;
     background:linear-gradient(180deg,#8bffb0,var(--good));box-shadow:0 7px 0 #1f9d59;cursor:pointer}
   .go:active{transform:translateY(3px);box-shadow:0 4px 0 #1f9d59}
   .startcard .hint{font-size:12px;color:var(--muted)}
 
   /* Login */
-  .login{z-index:40;background:radial-gradient(700px 600px at 50% 30%, #3a1a7e, #1a0f3d 75%)}
+  .login{z-index:40;background:radial-gradient(700px 600px at 50% 30%, #143f7e, #1a0f3d 75%)}
   .logincard{max-width:400px;width:100%;text-align:center;display:flex;flex-direction:column;gap:14px;margin:auto}
   .logincard .big{font-size:40px;font-weight:900;letter-spacing:-1px;line-height:1.05}
   .logincard .sub{color:var(--muted);font-size:15px;font-weight:600;margin-top:-6px}
@@ -184,7 +184,7 @@
   .field{text-align:left;display:flex;flex-direction:column;gap:6px}
   .field label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
   .field input{
-    min-height:54px;border-radius:14px;border:2px solid #5a3ea8;background:#241249;color:var(--ink);
+    min-height:54px;border-radius:14px;border:2px solid #3a6cb0;background:#0d2547;color:var(--ink);
     font-family:inherit;font-size:20px;font-weight:800;padding:0 16px;outline:none;letter-spacing:.5px;
   }
   .field input:focus{border-color:var(--sun)}
@@ -194,7 +194,7 @@
   .credit{font-size:12px;font-weight:800;color:var(--sun);letter-spacing:.5px;margin-top:4px;opacity:.9}
 
   /* Leaderboard */
-  .board{z-index:25;background:#1a0f3dee;backdrop-filter:blur(3px)}
+  .board{z-index:25;background:#07182fee;backdrop-filter:blur(3px)}
   .boardcard{
     max-width:440px;width:100%;margin:auto;background:linear-gradient(180deg,var(--panel2),var(--panel));
     border:1px solid var(--edge);border-radius:24px;padding:18px 16px;display:flex;flex-direction:column;gap:12px;
