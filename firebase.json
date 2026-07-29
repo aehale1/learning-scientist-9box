@@ -1,23 +1,12 @@
 {
-  "hosting": [
-    {
-      "target": "ninebox",
-      "public": ".",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/.*/**",
-        "**/node_modules/**",
-        "game/**"
-      ]
-    },
-    {
-      "target": "game",
-      "public": "game",
-      "ignore": [
-        "**/.*",
-        "**/.*/**"
-      ]
-    }
-  ]
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/.*/**",
+      "**/node_modules/**",
+      "game/**"
+    ]
+  }
 }

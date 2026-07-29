@@ -542,9 +542,8 @@
   function sfxJingle(){play([[523,0,0.12,"square",0.18],[659,0.1,0.12,"square",0.18],[784,0.2,0.2,"square",0.18]]);}
 
   // ================== CLOUD (Firestore REST) ==================
-  var FS_KEY="AIzaSyCakO0RqkUJpw5LTAeS835ffLiRJQGXW1g";
-  var FS_BASE="https://firestore.googleapis.com/v1/projects/ls-9block/databases/(default)/documents";
-  var FS_DOCROOT="projects/ls-9block/databases/(default)/documents";
+  var FS_KEY="AIzaSyDeg2r6_w5Iz-ZoDhleMa3yFIgPAuo6HBE";
+  var FS_BASE="https://firestore.googleapis.com/v1/projects/math-monsters-151/databases/(default)/documents";
   var ADMIN_CODE="k7q2zr9a";
 
   // fetch with a timeout so slow/blocked networks fall back to device-only mode
@@ -567,29 +566,11 @@
   function playerDataStr(){
     return JSON.stringify({pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught});
   }
-  function fsCreateBody(){
-    return JSON.stringify({writes:[{
-      update:{
-        name:FS_DOCROOT+"/assessments/mm"+me.slug,
-        fields:{
-          name:{stringValue:"·"},
-          ratings:{mapValue:{fields:{q1:{integerValue:"3"}}}},
-          yScore:{doubleValue:1},xScore:{doubleValue:1},
-          xBand:{integerValue:"0"},yBand:{integerValue:"0"},
-          archetypeKey:{stringValue:"mm"},color:{stringValue:"#000"},
-          mm:{booleanValue:true},
-          mmName:{stringValue:me.name},
-          mmData:{stringValue:playerDataStr()}
-        }
-      },
-      updateTransforms:[{fieldPath:"createdAt",setToServerValue:"REQUEST_TIME"}]
-    }]});
-  }
-  // Rules allow create + delete but not update, so a save = delete then re-create.
   function cloudWrite(){
-    return fsFetch(FS_BASE+"/assessments/mm"+me.slug+"?key="+FS_KEY,{method:"DELETE"})
-      .then(function(){ return fsFetch(FS_BASE+":commit?key="+FS_KEY,{method:"POST",headers:{"Content-Type":"application/json"},body:fsCreateBody()}); })
-      .then(function(r){ if(!r.ok) throw new Error("commit "+r.status); online=true; setCloudTag(); })
+    return fsFetch(FS_BASE+"/players/"+me.slug+"?key="+FS_KEY,{
+      method:"PATCH",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({fields:{mmName:{stringValue:me.name},mmData:{stringValue:playerDataStr()}}})
+    }).then(function(r){ if(!r.ok) throw new Error("save "+r.status); online=true; setCloudTag(); })
       .catch(function(){ online=false; setCloudTag(); });
   }
   var saveTimer=null;
@@ -610,7 +591,7 @@
   }
 
   function fetchPlayer(slug){
-    return fsFetch(FS_BASE+"/assessments/mm"+slug+"?key="+FS_KEY).then(function(r){
+    return fsFetch(FS_BASE+"/players/"+slug+"?key="+FS_KEY).then(function(r){
       if(r.status===404) return {found:false};
       if(!r.ok) throw new Error("get "+r.status);
       return r.json().then(function(j){
@@ -622,20 +603,17 @@
     });
   }
   function fetchBoard(){
-    return fsFetch(FS_BASE+":runQuery?key="+FS_KEY,{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({structuredQuery:{from:[{collectionId:"assessments"}],where:{fieldFilter:{field:{fieldPath:"mm"},op:"EQUAL",value:{booleanValue:true}}},limit:200}})
-    }).then(function(r){
-      if(!r.ok) throw new Error("query "+r.status);
+    return fsFetch(FS_BASE+"/players?pageSize=300&key="+FS_KEY).then(function(r){
+      if(!r.ok) throw new Error("list "+r.status);
       return r.json();
-    }).then(function(arr){
+    }).then(function(j){
       var rows=[];
-      (arr||[]).forEach(function(item){
-        if(!item.document) return;
-        var f=item.document.fields||{};
+      (j.documents||[]).forEach(function(doc){
+        var f=doc.fields||{};
         var d={};
         try{d=JSON.parse(f.mmData.stringValue);}catch(e){}
         rows.push({
-          docName:item.document.name,
+          docName:doc.name,
           name:(f.mmName&&f.mmName.stringValue)||"?",
           right:d.right||0, wrong:d.wrong||0,
           caught:(d.caught||[]), admin:!!d.admin

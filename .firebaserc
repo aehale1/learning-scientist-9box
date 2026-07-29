@@ -1,13 +1,5 @@
 {
   "projects": {
     "default": "ls-9block"
-  },
-  "targets": {
-    "ls-9block": {
-      "hosting": {
-        "ninebox": ["ls-9block"],
-        "game": ["math-monsters-game"]
-      }
-    }
   }
 }
