@@ -1111,7 +1111,8 @@ function restartQuiz() {
 
   if (USE_FIREBASE && db) {
     db.collection('assessments').orderBy('createdAt').onSnapshot(snap => {
-      people = snap.docs.map(docToPerson);
+      // Docs flagged mm:true belong to the Math Monsters game, not the 9-box.
+      people = snap.docs.filter(doc => !doc.data().mm).map(docToPerson);
       renderGrid();
       renderRoster();
       renderSummary();
