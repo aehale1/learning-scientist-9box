@@ -333,33 +333,59 @@
   var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0,muted:false};
 
   // ---- Sound effects (Web Audio, no files needed) ----
-  var AC=null;
+  var AC=null, unlocked=false;
   function audio(){
     if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){AC=null;}}
-    if(AC&&AC.state==="suspended")AC.resume();
     return AC;
   }
-  function tone(freq,start,dur,type,vol){
-    var ac=audio(); if(!ac||state.muted) return;
-    var o=ac.createOscillator(),g=ac.createGain();
-    o.type=type||"square"; o.frequency.value=freq;
-    var t=ac.currentTime+start;
-    g.gain.setValueAtTime(0.0001,t);
-    g.gain.exponentialRampToValueAtTime(vol||0.15,t+0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(g); g.connect(ac.destination);
-    o.start(t); o.stop(t+dur+0.05);
+  // Mobile browsers keep audio locked until a real touch; unlock on the
+  // very first interaction by resuming and playing a silent buffer.
+  function unlock(){
+    var ac=audio(); if(!ac) return;
+    if(ac.state==="suspended"){try{ac.resume();}catch(e){}}
+    if(!unlocked){
+      try{
+        var b=ac.createBuffer(1,1,22050);
+        var src=ac.createBufferSource();
+        src.buffer=b; src.connect(ac.destination); src.start(0);
+        unlocked=true;
+      }catch(e){}
+    }
   }
-  function sfxTap(){tone(660,0,0.06,"square",0.07);}
-  function sfxCorrect(){[523,659,784,1047].forEach(function(f,i){tone(f,i*0.09,0.16,"square",0.14);});}
-  function sfxWrong(){tone(196,0,0.22,"sawtooth",0.11);tone(147,0.13,0.32,"sawtooth",0.11);}
-  function sfxCatch(){[392,523,659,784,1047,1319].forEach(function(f,i){tone(f,i*0.08,0.18,"triangle",0.18);});}
+  ["touchstart","touchend","pointerdown","mousedown","keydown"].forEach(function(ev){
+    document.addEventListener(ev,unlock,true);
+  });
+  function play(seq){
+    var ac=audio(); if(!ac||state.muted) return;
+    var run=function(){
+      var now=ac.currentTime;
+      for(var i=0;i<seq.length;i++){
+        var n=seq[i]; // [freq, startOffset, dur, waveType, volume]
+        var o=ac.createOscillator(), g=ac.createGain();
+        o.type=n[3]; o.frequency.value=n[0];
+        var t=now+n[1];
+        g.gain.setValueAtTime(0.0001,t);
+        g.gain.exponentialRampToValueAtTime(n[4],t+0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001,t+n[2]);
+        o.connect(g); g.connect(ac.destination);
+        o.start(t); o.stop(t+n[2]+0.05);
+      }
+    };
+    if(ac.state==="running"){run();}
+    else{try{ac.resume().then(run,function(){});}catch(e){}}
+  }
+  function sfxTap(){play([[660,0,0.06,"square",0.08]]);}
+  function sfxCorrect(){play([523,659,784,1047].map(function(f,i){return [f,i*0.09,0.16,"square",0.18];}));}
+  function sfxWrong(){play([[196,0,0.22,"sawtooth",0.14],[147,0.13,0.32,"sawtooth",0.14]]);}
+  function sfxCatch(){play([392,523,659,784,1047,1319].map(function(f,i){return [f,i*0.08,0.18,"triangle",0.22];}));}
   function sfxMega(){
+    var seq=[];
     [262,330,392,523,659,784,1047,1319,1568].forEach(function(f,i){
-      tone(f,i*0.07,0.22,"sawtooth",0.10);
-      tone(f*2,i*0.07,0.15,"triangle",0.09);
+      seq.push([f,i*0.07,0.22,"sawtooth",0.12]);
+      seq.push([f*2,i*0.07,0.15,"triangle",0.11]);
     });
-    tone(2093,0.65,0.5,"triangle",0.12);
+    seq.push([2093,0.65,0.5,"triangle",0.14]);
+    play(seq);
   }
 
   // ---- Build Dex slots ----
@@ -505,7 +531,8 @@
     newQuestion();
   });
   $("#goBtn").addEventListener("click",function(){
-    sfxTap();
+    unlock();
+    play([[523,0,0.12,"square",0.18],[659,0.1,0.12,"square",0.18],[784,0.2,0.2,"square",0.18]]);
     $("#start").classList.add("hide");
     newQuestion();
   });
