@@ -119,7 +119,7 @@
   .dex h2{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline}
   .dex h2 span{font-size:12px;color:var(--sun);font-weight:800;letter-spacing:.3px;font-variant-numeric:tabular-nums}
   .dexgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:10px}
-  .slot{aspect-ratio:1;border-radius:10px;background:#0d2547;border:1px dashed #2a5288;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+  .slot{aspect-ratio:1;border-radius:10px;background:#0d2547;border:1px dashed #2a5288;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;cursor:pointer}
   .slot svg{width:100%;height:100%}
   .slot.empty::after{content:"?";color:#3a6cb0;font-weight:900;font-size:14px}
   .slot.new{animation:pop .5s ease}
@@ -169,6 +169,32 @@
   .reward.shinyGlow{background:radial-gradient(600px 500px at 50% 40%, #9a8a1a 0%, #7a5a8a99 55%, #07182fee 100%)}
   .reward.shinyGlow .monster{width:255px;height:255px;filter:drop-shadow(0 0 36px #ffffffdd) drop-shadow(0 14px 22px #000a)}
   .reward.shinyGlow .mname{color:#fff;text-shadow:0 0 20px #ffd700}
+
+  /* Monster info card */
+  .mcardo{z-index:35;background:#07182fdd;backdrop-filter:blur(3px)}
+  .mcard{
+    position:relative;max-width:360px;width:100%;margin:auto;text-align:center;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--edge);border-radius:24px;padding:22px 18px 20px;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    animation:rise .35s cubic-bezier(.2,1.3,.5,1) both;
+  }
+  .mclose{position:absolute;top:10px;right:10px;min-width:38px;min-height:38px;border-radius:12px;border:1px solid var(--edge);background:#0006;color:var(--ink);font-size:16px;font-weight:900;cursor:pointer;font-family:inherit}
+  .mart{width:150px;height:150px;filter:drop-shadow(0 10px 16px #000a)}
+  .mart svg{width:100%;height:100%}
+  .mart.sil svg{filter:brightness(0);opacity:.85}
+  .mchips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .mchip{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;padding:4px 10px;border-radius:999px;border:1px solid var(--edge);color:var(--muted)}
+  .mchip.rare{color:var(--sun);border-color:#7a6a2f}
+  .mchip.shiny{color:#fff;border-color:#fff;text-shadow:0 0 8px #ffd700}
+  .mbio{font-size:14px;font-weight:600;color:var(--ink);line-height:1.55;padding:2px 4px}
+  .mstats{width:100%;display:flex;flex-direction:column;gap:7px;margin-top:4px}
+  .srow{display:flex;align-items:center;gap:10px}
+  .slab{width:64px;text-align:left;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+  .sbar{flex:1;height:10px;border-radius:999px;background:#0006;overflow:hidden}
+  .sfill{height:100%;border-radius:999px}
+  .sval{width:20px;font-size:13px;font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+  .mfacts{font-size:12px;font-weight:700;color:var(--muted);margin-top:2px}
 
   /* Champion party */
   .party{z-index:50;background:radial-gradient(800px 700px at 50% 30%, #1a5d8a, #071a2f 75%)}
@@ -394,6 +420,20 @@
     <div class="cheer" id="rewardCheer">Nice work!</div>
     <div class="teaser" id="rewardTeaser" style="display:none">🚧 Max is building a third location… <b>STAY TUNED!</b> 🚧</div>
     <button class="next show" id="rewardNext">Catch &amp; continue ▶</button>
+  </div>
+</div>
+
+<!-- Monster info card -->
+<div class="overlay mcardo" id="mcardo">
+  <div class="mcard">
+    <button class="mclose" id="mcardClose" aria-label="Close">✕</button>
+    <div class="mart" id="mcArt"></div>
+    <div class="mnum" id="mcNum">#001</div>
+    <div class="mname" id="mcName" style="font-size:26px">—</div>
+    <div class="mchips" id="mcChips"></div>
+    <div class="mbio" id="mcBio"></div>
+    <div class="mstats" id="mcStats"></div>
+    <div class="mfacts" id="mcFacts"></div>
   </div>
 </div>
 
@@ -1139,6 +1179,75 @@
     if(finishedIsland) pendingParty=true;
     saveSoon();
   }
+
+  // ================== MONSTER INFO CARDS ==================
+  var BIO_HOME=["hides in the tall grass","naps on warm sunny rocks","zooms around in the clouds","lives beside a bubbling stream","digs cozy tunnels underground","floats above the treetops","surfs the biggest waves","camps out near the old volcano","builds forts out of leaves","hangs out under rainbows"];
+  var BIO_LIKE=["snacking on berries","math races with friends","chasing fireflies at night","collecting shiny pebbles","singing songs at sunset","practicing dance moves","playing hide-and-seek","telling silly jokes","splashing in puddles","drawing in the sand"];
+  var BIO_POWER=["It can jump higher than a house","It remembers every times table it has ever heard","Its footsteps sparkle in the dark","It cheers extra loud when you answer fast","It can smell a wrong answer from a mile away","Its giggle makes flowers grow","It once raced a shooting star and almost won","It does a backflip every time someone gets a streak"];
+  var STAT_NAMES=["Power","Speed","Smarts","Sparkle"];
+  function monsterInfo(idx){
+    var r=mulberry32(((idx+1)*2654435761)^0x9E3779B9);
+    function p(a){return a[Math.floor(r()*a.length)];}
+    var c=ALL[idx];
+    var boost=c.shiny?4:(c.tier===3?4:c.tier===2?3:c.tier===1?2:(c.legend?3:0));
+    var stats=STAT_NAMES.map(function(){return Math.min(10,1+Math.floor(r()*6)+boost);});
+    if(c.shiny) stats[3]=10;
+    var hFt=Math.round((1+r()*5+(c.mega?2:0))*10)/10;
+    var wLb=Math.round(5+r()*120+(c.mega?80:0));
+    var table=2+Math.floor(r()*11);
+    var bio=c.name+" "+p(BIO_HOME)+" and loves "+p(BIO_LIKE)+". "+p(BIO_POWER)+"!";
+    return {stats:stats,hFt:hFt,wLb:wLb,table:table,bio:bio};
+  }
+  function rarityLabel(c){
+    if(c.shiny) return "✨ Shiny Mega";
+    if(c.tier===3) return "Ultra Mega";
+    if(c.tier===2) return "Super Mega";
+    if(c.tier===1) return "Mega";
+    if(c.legend) return "Legendary";
+    return "Common";
+  }
+  function openMonsterCard(idx){
+    var c=ALL[idx];
+    var caught=state.caught.indexOf(idx)>=0;
+    var art=$("#mcArt");
+    art.innerHTML=svgCreature(c);
+    art.className="mart"+(caught?"":" sil");
+    $("#mcNum").textContent=dexLabel(idx);
+    $("#mcName").textContent=caught?c.name:"???";
+    var chips='';
+    chips+='<span class="mchip">'+(caught?escapeHTML(c.type)+" type":"? type")+'</span>';
+    var rare=rarityLabel(c);
+    if(rare!=="Common") chips+='<span class="mchip '+(c.shiny?"shiny":"rare")+'">'+rare+'</span>';
+    chips+='<span class="mchip">'+(c.island?"🏝️ Island":"⭐ Level 1")+'</span>';
+    $("#mcChips").innerHTML=chips;
+    if(caught){
+      var info=monsterInfo(idx);
+      $("#mcBio").textContent=info.bio;
+      var sh='';
+      for(var i=0;i<STAT_NAMES.length;i++){
+        sh+='<div class="srow"><span class="slab">'+STAT_NAMES[i]+'</span>'+
+            '<div class="sbar"><div class="sfill" style="width:'+(info.stats[i]*10)+'%;background:'+c.accent+'"></div></div>'+
+            '<span class="sval">'+info.stats[i]+'</span></div>';
+      }
+      $("#mcStats").innerHTML=sh;
+      $("#mcFacts").textContent="Height "+info.hFt+" ft · Weight "+info.wLb+" lb · Favorite table: ×"+info.table;
+    }else{
+      $("#mcBio").textContent="Not caught yet! Keep answering questions to meet this monster.";
+      $("#mcStats").innerHTML="";
+      $("#mcFacts").textContent="";
+    }
+    $("#mcardo").classList.add("show");
+  }
+  $(".dex").addEventListener("click",function(e){
+    var slot=e.target.closest(".slot"); if(!slot) return;
+    sfxTap();
+    pauseGame(); // freeze the island clock while admiring monsters
+    openMonsterCard(parseInt(slot.dataset.idx,10));
+  });
+  $("#mcardClose").addEventListener("click",function(){
+    sfxTap();
+    $("#mcardo").classList.remove("show");
+  });
 
   // ================== CHAMPION PARTY ==================
   var pendingParty=false, partyTimer=null, confettiRAF=null;
