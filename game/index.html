@@ -251,6 +251,8 @@
   .btable .sub{display:block;font-size:10px;color:var(--muted);font-weight:700}
   .rm{background:none;border:1px solid #7a3a3a;color:var(--bad);border-radius:8px;font-size:11px;font-weight:800;padding:3px 7px;cursor:pointer;margin-left:6px}
   .boardmsg{font-size:13px;color:var(--muted);font-weight:700;text-align:center;padding:6px 0}
+  .bhead{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;color:var(--sun);margin:10px 0 2px}
+  .bhead:first-child{margin-top:0}
   .adminbar{display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px solid var(--edge);padding-top:10px}
   .adminbar .tag{font-size:12px;font-weight:900;color:var(--sun)}
   .dangerbtn{background:none;border:1px solid #7a3a3a;color:var(--bad);border-radius:10px;font-family:inherit;font-size:12px;font-weight:800;padding:8px 12px;cursor:pointer}
@@ -615,7 +617,7 @@
   var MEGA_CHEERS=["MEGA CATCH!!","UNBELIEVABLE!!","LEGENDARY!!","MEGA POWER!!","3 IN A ROW — MEGA!!"];
 
   // ================== STATE ==================
-  var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0,muted:false,world:1};
+  var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0,muted:false,world:1,l1:null};
   var me=null; // {name, slug, pin, admin}
   var online=null; // null unknown, true, false
 
@@ -732,7 +734,7 @@
     else{t.textContent="…";t.className="cloudTag";}
   }
   function playerDataStr(){
-    return JSON.stringify({pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught});
+    return JSON.stringify({pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught,l1:state.l1||null});
   }
   function cloudWrite(){
     return fsFetch(FS_BASE+"/players/"+me.slug+"?key="+FS_KEY,{
@@ -752,7 +754,7 @@
 
   function localSave(){
     if(!me) return;
-    try{localStorage.setItem("mmlocal_"+me.slug,JSON.stringify({name:me.name,pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught}));}catch(e){}
+    try{localStorage.setItem("mmlocal_"+me.slug,JSON.stringify({name:me.name,pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught,l1:state.l1||null}));}catch(e){}
   }
   function localLoad(slug){
     try{var s=localStorage.getItem("mmlocal_"+slug);return s?JSON.parse(s):null;}catch(e){return null;}
@@ -784,7 +786,7 @@
           docName:doc.name,
           name:(f.mmName&&f.mmName.stringValue)||"?",
           right:d.right||0, wrong:d.wrong||0,
-          caught:(d.caught||[]), admin:!!d.admin
+          caught:(d.caught||[]), admin:!!d.admin, l1:d.l1||null
         });
       });
       return rows;
@@ -825,9 +827,11 @@
     return state.caught.filter(function(i){return tierOf(i)===t && isIsland(i)===!!island;}).length;
   }
   function renderProgress(){
-    $("#sRight").textContent=state.right;
-    $("#sWrong").textContent=state.wrong;
-    $("#sCaught").textContent=state.caught.length;
+    // On the island the top chips show the island-only score; Level 1's stays frozen
+    var onIsl = state.world===2 && state.l1;
+    $("#sRight").textContent = onIsl ? state.right-state.l1.right : state.right;
+    $("#sWrong").textContent = onIsl ? state.wrong-state.l1.wrong : state.wrong;
+    $("#sCaught").textContent = onIsl ? state.caught.filter(isIsland).length : state.caught.length;
     $("#dexCount").textContent=regCount()+" / "+REG_TOTAL;
     $("#megaCount").textContent=tierCount(1,false)+" / "+MEGA_TOTAL;
     $("#superCount").textContent=tierCount(2,false)+" / "+SUPER_TOTAL;
@@ -1024,6 +1028,8 @@
       renderProgress();
     }
     var unlockedIsland = applyWorld(); // true only on the catch that completes Level 1
+    if(unlockedIsland && !state.l1) state.l1={right:state.right,wrong:state.wrong}; // freeze the Level 1 score
+    renderProgress();
     var finished151 = isNew && !c.mega && !c.island && regCount()===REG_TOTAL;
     var finishedIsland = isNew && c.island && state.caught.filter(isIsland).length===ISL_REG+ISL_MEGA+ISL_SUPER+ISL_ULTRA+ISL_SHINY;
     $("#rewardMonster").innerHTML=svgCreature(c);
@@ -1058,36 +1064,72 @@
 
   // ================== LEADERBOARD ==================
   function boardRowsHTML(rows){
-    function dexScore(r){
-      return r.caught.filter(function(i){return tierOf(i)===0;}).length;
-    }
-    rows.sort(function(a,b){
-      var d=dexScore(b)-dexScore(a);
-      if(d!==0) return d;
-      return (b.right||0)-(a.right||0);
-    });
     var medals=["🥇","🥈","🥉"];
-    var h='<table class="btable"><tr><th></th><th>Player</th><th>Dex</th><th>Right</th><th>Wrong</th>'+(me&&me.admin?'<th></th>':'')+'</tr>';
-    rows.forEach(function(r,i){
-      var regs=r.caught.filter(function(x){return x<REG_TOTAL;}).length;
-      var isl=r.caught.filter(function(x){return isIsland(x)&&tierOf(x)===0;}).length;
-      var megas=r.caught.filter(function(x){return tierOf(x)>0;}).length;
-      var shinies=r.caught.filter(function(x){return tierOf(x)===4;}).length;
-      var onIsland=r.caught.filter(function(x){return x<L1_TOTAL;}).length===L1_TOTAL;
-      var isMe=me&&r.name.toLowerCase()===me.name.toLowerCase();
-      var sub='';
-      if(megas) sub+=megas+' mega'+(megas>1?'s':'');
-      if(shinies) sub+=(sub?' · ':'')+'✨'+shinies;
-      h+='<tr'+(isMe?' class="me"':'')+'>'+
-        '<td>'+(medals[i]||(i+1))+'</td>'+
-        '<td>'+escapeHTML(r.name)+(onIsland?' 🏝️':'')+(r.admin?' 👑':'')+(sub?'<span class="sub">'+sub+'</span>':'')+'</td>'+
-        '<td>'+regs+'/'+REG_TOTAL+(onIsland?'<span class="sub">🏝️ '+isl+'/'+ISL_REG+'</span>':'')+'</td>'+
-        '<td>'+(r.right||0)+'</td>'+
-        '<td>'+(r.wrong||0)+'</td>'+
-        (me&&me.admin?'<td>'+(r.docName?'<button class="rm" data-doc="'+r.docName+'" data-name="'+escapeHTML(r.name)+'">✖</button>':'')+'</td>':'')+
-        '</tr>';
+    function isDone(r){return r.caught.filter(function(x){return x<L1_TOTAL;}).length===L1_TOTAL;}
+
+    function table(list,cols,adminCol){
+      var h='<table class="btable"><tr><th></th><th>Player</th><th>Dex</th><th>Right</th><th>Wrong</th>'+(adminCol?'<th></th>':'')+'</tr>';
+      list.forEach(function(r,i){
+        var isMe=me&&r.name.toLowerCase()===me.name.toLowerCase();
+        var c=cols(r);
+        h+='<tr'+(isMe?' class="me"':'')+'>'+
+          '<td>'+(medals[i]||(i+1))+'</td>'+
+          '<td>'+escapeHTML(r.name)+c.marks+(c.sub?'<span class="sub">'+c.sub+'</span>':'')+'</td>'+
+          '<td>'+c.dex+'</td>'+
+          '<td>'+c.right+'</td>'+
+          '<td>'+c.wrong+'</td>'+
+          (adminCol?'<td>'+(r.docName?'<button class="rm" data-doc="'+r.docName+'" data-name="'+escapeHTML(r.name)+'">✖</button>':'')+'</td>':'')+
+          '</tr>';
+      });
+      return h+'</table>';
+    }
+
+    // Island board: only players who finished Level 1; island-only score
+    var islanders=rows.filter(isDone);
+    function islRight(r){return r.l1?(r.right||0)-(r.l1.right||0):(r.right||0);}
+    function islWrong(r){return r.l1?(r.wrong||0)-(r.l1.wrong||0):(r.wrong||0);}
+    islanders.sort(function(a,b){
+      var ad=a.caught.filter(function(x){return isIsland(x)&&tierOf(x)===0;}).length;
+      var bd=b.caught.filter(function(x){return isIsland(x)&&tierOf(x)===0;}).length;
+      if(bd!==ad) return bd-ad;
+      return islRight(b)-islRight(a);
     });
-    h+='</table>';
+
+    // Level 1 board: everyone; finished players keep their frozen score
+    var l1rows=rows.slice();
+    function l1Right(r){return r.l1?(r.l1.right||0):(r.right||0);}
+    function l1Wrong(r){return r.l1?(r.l1.wrong||0):(r.wrong||0);}
+    l1rows.sort(function(a,b){
+      var ad=a.caught.filter(function(x){return x<REG_TOTAL;}).length;
+      var bd=b.caught.filter(function(x){return x<REG_TOTAL;}).length;
+      if(bd!==ad) return bd-ad;
+      return l1Right(b)-l1Right(a);
+    });
+
+    var h='';
+    if(islanders.length){
+      h+='<div class="bhead">🏝️ Monster Island — Level 2</div>';
+      h+=table(islanders,function(r){
+        var isl=r.caught.filter(function(x){return isIsland(x)&&tierOf(x)===0;}).length;
+        var megas=r.caught.filter(function(x){return isIsland(x)&&tierOf(x)>0&&tierOf(x)<4;}).length;
+        var shinies=r.caught.filter(function(x){return tierOf(x)===4;}).length;
+        var sub='';
+        if(megas) sub+=megas+' mega'+(megas>1?'s':'');
+        if(shinies) sub+=(sub?' · ':'')+'✨ '+shinies+' shiny';
+        return {marks:(r.admin?' 👑':''),sub:sub,dex:isl+'/'+ISL_REG,right:islRight(r),wrong:islWrong(r)};
+      },false);
+    }
+    h+='<div class="bhead">⭐ Level 1'+(islanders.length?'':' — catch everything to reach the island!')+'</div>';
+    h+=table(l1rows,function(r){
+      var regs=r.caught.filter(function(x){return x<REG_TOTAL;}).length;
+      var megas=r.caught.filter(function(x){return !isIsland(x)&&tierOf(x)>0;}).length;
+      var done=isDone(r);
+      return {
+        marks:(done?' 🏝️':'')+(r.admin?' 👑':''),
+        sub:(megas?megas+' mega'+(megas>1?'s':''):'')+(done?(megas?' · ':'')+'complete!':''),
+        dex:regs+'/'+REG_TOTAL, right:l1Right(r), wrong:l1Wrong(r)
+      };
+    },!!(me&&me.admin));
     return h;
   }
   function escapeHTML(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -1099,7 +1141,7 @@
         var k=localStorage.key(i);
         if(k&&k.indexOf("mmlocal_")===0){
           var d=JSON.parse(localStorage.getItem(k));
-          rows.push({docName:null,name:d.name,right:d.right||0,wrong:d.wrong||0,caught:d.caught||[],admin:!!d.admin});
+          rows.push({docName:null,name:d.name,right:d.right||0,wrong:d.wrong||0,caught:d.caught||[],admin:!!d.admin,l1:d.l1||null});
         }
       }
     }catch(e){}
@@ -1147,18 +1189,27 @@
       openBoard();
     }).catch(function(){alert("Could not clear right now — try again.");});
   });
-  $("#boardBtn").addEventListener("click",function(){sfxTap();openBoard();});
+  $("#boardBtn").addEventListener("click",function(){sfxTap();stopTimer();openBoard();});
   $("#boardRefresh").addEventListener("click",function(){sfxTap();openBoard();});
-  $("#boardClose").addEventListener("click",function(){sfxTap();$("#board").classList.remove("show");});
+  $("#boardClose").addEventListener("click",function(){
+    sfxTap();
+    $("#board").classList.remove("show");
+    // island questions are timed — deal a fresh one instead of resuming a stale clock
+    if(me && state.world===2 && !state.answered && !$("#start").classList.contains("show") && !$("#login").classList.contains("show")) newQuestion();
+  });
 
   // ================== LOGIN ==================
   function applyLoadedData(d){
     state.right=d.right||0;
     state.wrong=d.wrong||0;
     state.caught=(d.caught||[]).filter(function(i){return i>=0&&i<ALL.length;});
+    state.l1=d.l1||null;
     state.streak=0;
     state.world=1;
-    renderProgress();renderDexAll();updateStreak();applyWorld();
+    applyWorld();
+    // players who unlocked before score-freezing existed get a snapshot now
+    if(state.world===2 && !state.l1) state.l1={right:state.right,wrong:state.wrong};
+    renderProgress();renderDexAll();updateStreak();
   }
   function finishLogin(){
     try{localStorage.setItem("mmlast",me.name);}catch(e){}
