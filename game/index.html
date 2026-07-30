@@ -376,6 +376,7 @@
     <div class="mname" id="rewardName">—</div>
     <div class="mtype" id="rewardType">—</div>
     <div class="cheer" id="rewardCheer">Nice work!</div>
+    <div class="teaser" id="rewardTeaser" style="display:none">🚧 Max is building a third location… <b>STAY TUNED!</b> 🚧</div>
     <button class="next show" id="rewardNext">Catch &amp; continue ▶</button>
   </div>
 </div>
@@ -387,7 +388,6 @@
     <div class="ptitle">🏆 CHAMPION! 🏆</div>
     <div class="psub">You beat <b>Monster Island</b>!<br>Every single monster caught — all 449!</div>
     <div class="dancefloor" id="dancefloor"></div>
-    <div class="teaser">🚧 Max is building a third location… <b>STAY TUNED!</b> 🚧</div>
     <button class="next show" id="partyClose">🎉 Keep playing ▶</button>
   </div>
 </div>
@@ -1095,6 +1095,8 @@
     else if(tier===2) sfxSuper();
     else if(tier===1||finished151) sfxMega();
     else sfxCatch();
+    var islandAllCaught = state.caught.filter(isIsland).length===ISL_REG+ISL_MEGA+ISL_SUPER+ISL_ULTRA+ISL_SHINY;
+    $("#rewardTeaser").style.display = islandAllCaught ? "block" : "none";
     if(finishedIsland) pendingParty=true;
     saveSoon();
   }
