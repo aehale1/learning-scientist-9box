@@ -132,6 +132,9 @@
   .slot.shinyslot{border:2px dashed #fff;background:#3a3618}
   .slot.shinyslot.empty::after{content:"✨";font-size:12px}
 
+  .slot.mathslot{border:2px dashed var(--lime);background:#1a3010}
+  .slot.mathslot.empty::after{content:"×";color:var(--lime);font-size:14px}
+
   /* Level 2: Monster Island theme */
   body.island{--night:#02363a;--night2:#0a5e5a;--panel:#0c4f4a;--panel2:#127a63;--muted:#a8e2d8}
   body.island .slot{background:#073b36;border-color:#1b6a5f}
@@ -143,6 +146,19 @@
   body.island .ans{background:linear-gradient(180deg,#fff,#ffedc2);color:#4a3006;box-shadow:0 6px 0 #d8b87f, 0 10px 18px -8px #000a}
   body.island .ans:active{box-shadow:0 2px 0 #d8b87f}
   .lvl{display:none;align-items:center;gap:4px;font-size:11px;font-weight:900;padding:4px 10px;border-radius:999px;background:linear-gradient(180deg,#1a8a6a,#0d5a44);border:1px solid #33e6c9;color:#d2fff6}
+
+  /* Level 3: Underwater Temple City theme */
+  body.temple{--night:#03072b;--night2:#0b1e66;--panel:#101d5c;--panel2:#1a2f80;--muted:#a8c4f0}
+  body.temple .slot{background:#0a1445;border-color:#2a4088}
+  body.temple .slot.empty::after{color:#3a5cb0}
+  body.temple .slot.megaslot{background:#31240f;border-color:var(--sun)}
+  body.temple .slot.superslot{background:#301a08;border-color:#ff8c1f}
+  body.temple .slot.ultraslot{background:#082e28;border-color:var(--aqua)}
+  body.temple .slot.shinyslot{background:#3a3618;border-color:#fff}
+  body.temple .slot.mathslot{background:#1a3010;border-color:var(--lime)}
+  body.temple .ans{background:linear-gradient(180deg,#fff,#d8f4ff);color:#062a4a;box-shadow:0 6px 0 #7fb8d8, 0 10px 18px -8px #000a}
+  body.temple .ans:active{box-shadow:0 2px 0 #7fb8d8}
+  body.temple .lvl{background:linear-gradient(180deg,#1a4a8a,#0d2a5a);border-color:#7fb8ff;color:#d8ecff}
 
   /* Question timer (island only) */
   .card{position:relative}
@@ -166,6 +182,9 @@
   .l1wrap>summary::before{content:"▸ ";color:var(--sun)}
   .l1wrap[open]>summary::before{content:"▾ "}
 
+  .reward.mathGlow{background:radial-gradient(600px 500px at 50% 40%, #2a6a0a 0%, #1a4d8a99 55%, #07182fee 100%)}
+  .reward.mathGlow .monster{width:250px;height:250px;filter:drop-shadow(0 0 34px #9bff5ccc) drop-shadow(0 14px 22px #000a)}
+  .reward.mathGlow .mname{color:var(--lime);text-shadow:0 0 18px #9bff5c88}
   .reward.shinyGlow{background:radial-gradient(600px 500px at 50% 40%, #9a8a1a 0%, #7a5a8a99 55%, #07182fee 100%)}
   .reward.shinyGlow .monster{width:255px;height:255px;filter:drop-shadow(0 0 36px #ffffffdd) drop-shadow(0 14px 22px #000a)}
   .reward.shinyGlow .mname{color:#fff;text-shadow:0 0 20px #ffd700}
@@ -369,7 +388,25 @@
   </div>
 
   <div class="dex">
-    <div id="islandDex" style="display:none">
+    <div id="templeDex" style="display:none">
+      <h2>🌊 Temple City Dex <span id="tdexCount">0 / 250</span></h2>
+      <div class="dexgrid" id="tdexgrid"></div>
+      <h2 style="margin-top:14px">🌊 Mega Dex <span id="tmegaCount">0 / 24</span></h2>
+      <div class="dexgrid" id="tmegagrid"></div>
+      <h2 style="margin-top:14px">🌊 Super Mega Dex <span id="tsuperCount">0 / 12</span></h2>
+      <div class="dexgrid" id="tsupergrid"></div>
+      <h2 style="margin-top:14px">🌊 Ultra Mega Dex <span id="tultraCount">0 / 8</span></h2>
+      <div class="dexgrid" id="tultragrid"></div>
+      <h2 style="margin-top:14px">✨ Shiny Mega Dex <span id="tshinyCount">0 / 10</span></h2>
+      <div class="dexgrid" id="tshinygrid"></div>
+      <h2 style="margin-top:14px">🧮 Math Mega Dex <span id="tmathCount">0 / 8</span></h2>
+      <div class="dexgrid" id="tmathgrid"></div>
+      <div class="dexnote">🌊 <b>Temple rules:</b> <b>5 seconds</b> per question, deep beneath the waves! Streaks: <b style="color:var(--sun)">3 = MEGA</b> · <b style="color:#ff8c1f">6 = SUPER</b> · <b style="color:var(--aqua)">9 = ULTRA</b> · <b style="color:#fff">12 = ✨ SHINY</b> · <b style="color:var(--lime)">15 in a row = 🧮 MATH MEGA!</b></div>
+      <hr style="border:none;border-top:1px solid var(--edge);margin:14px 0 10px">
+    </div>
+    <details class="l1wrap" id="l2wrap" open>
+      <summary id="l2sum" style="display:none">Island Dex — Level 2</summary>
+      <div id="islandDex" style="display:none">
       <h2>🏝️ Island Dex <span id="idexCount">0 / 200</span></h2>
       <div class="dexgrid" id="idexgrid"></div>
       <h2 style="margin-top:14px">🏝️ Mega Dex <span id="imegaCount">0 / 24</span></h2>
@@ -382,7 +419,8 @@
       <div class="dexgrid" id="ishinygrid"></div>
       <div class="dexnote">🏝️ <b>Island rules:</b> only <b>5 seconds</b> per question! Streaks: <b style="color:var(--sun)">3 = MEGA</b> · <b style="color:#ff8c1f">6 = SUPER</b> · <b style="color:var(--aqua)">9 = ULTRA</b> · <b style="color:#fff">12 in a row = ✨ SHINY MEGA ✨</b></div>
       <hr style="border:none;border-top:1px solid var(--edge);margin:14px 0 10px">
-    </div>
+      </div>
+    </details>
     <details class="l1wrap" id="l1wrap" open>
       <summary id="l1sum">Monster Dex — Level 1</summary>
       <h2 style="margin-top:8px">Monster Dex <span id="dexCount">0 / 151</span></h2>
@@ -418,7 +456,7 @@
     <div class="mname" id="rewardName">—</div>
     <div class="mtype" id="rewardType">—</div>
     <div class="cheer" id="rewardCheer">Nice work!</div>
-    <div class="teaser" id="rewardTeaser" style="display:none">🚧 Max is building a third location… <b>STAY TUNED!</b> 🚧</div>
+    <div class="teaser" id="rewardTeaser" style="display:none">🚧 Max is dreaming up the next world… <b>STAY TUNED!</b> 🚧</div>
     <button class="next show" id="rewardNext">Catch &amp; continue ▶</button>
   </div>
 </div>
@@ -442,7 +480,7 @@
   <canvas id="confetti"></canvas>
   <div class="partycard">
     <div class="ptitle">🏆 CHAMPION! 🏆</div>
-    <div class="psub">You beat <b>Monster Island</b>!<br>Every single monster caught — all 449!</div>
+    <div class="psub" id="partySub">You beat <b>Monster Island</b>!<br>The Underwater Temple City awaits below the waves…</div>
     <div class="dancefloor" id="dancefloor"></div>
     <button class="next show" id="partyClose">🎉 Keep playing ▶</button>
   </div>
@@ -511,7 +549,11 @@
   var REG_TOTAL=151, MEGA_TOTAL=24, SUPER_TOTAL=12, ULTRA_TOTAL=8;
   var L1_TOTAL=REG_TOTAL+MEGA_TOTAL+SUPER_TOTAL+ULTRA_TOTAL; // 195
   var ISL_REG=200, ISL_MEGA=24, ISL_SUPER=12, ISL_ULTRA=8, ISL_SHINY=10;
-  var TIER_NAMES=["","MEGA","SUPER MEGA","ULTRA MEGA","SHINY MEGA"];
+  var ISL_TOTAL=ISL_REG+ISL_MEGA+ISL_SUPER+ISL_ULTRA+ISL_SHINY; // 254
+  var L2_TOTAL=L1_TOTAL+ISL_TOTAL; // 449
+  var TEM_REG=250, TEM_MEGA=24, TEM_SUPER=12, TEM_ULTRA=8, TEM_SHINY=10, TEM_MATH=8;
+  var TEM_TOTAL=TEM_REG+TEM_MEGA+TEM_SUPER+TEM_ULTRA+TEM_SHINY+TEM_MATH; // 312
+  var TIER_NAMES=["","MEGA","SUPER MEGA","ULTRA MEGA","SHINY MEGA","MATH MEGA"];
 
   var HANDMADE=[
     {name:"Embertail", type:"Fire",   body:"#ff6a3d", belly:"#ffd0a3", accent:"#ffb02e", feat:"horn"},
@@ -614,9 +656,38 @@
   var IULTRAS=[]; while(IULTRAS.length<ISL_ULTRA) IULTRAS.push(genIsland("Ultra Mega ",3,false));
   var ISHINIES=[]; while(ISHINIES.length<ISL_SHINY) ISHINIES.push(genIsland("Shiny Mega ",4,true));
 
-  var ALL=REGULARS.concat(MEGAS,SUPERS,ULTRAS,IREGS,IMEGAS,ISUPERS,IULTRAS,ISHINIES); // index in ALL = the id stored in "caught"
-  function tierOf(idx){var c=ALL[idx];if(c.shiny)return 4;return c.mega?(c.tier||1):0;}
-  function isIsland(idx){return idx>=L1_TOTAL;}
+  // ---- Level 3: Underwater Temple City (generated after L1+L2 so both stay identical) ----
+  var TEMPLE_TYPES=["Deep Sea","Coral","Abyss","Current","Bubble","Kelp","Trench","Pearl","Siren","Temple","Angler","Jelly","Shipwreck","Treasure","Ruins","Merfolk","Octo","Shark","Ray","Glow","Sunken","Lantern"];
+  var TPRE=["Aqua","Bubb","Coral","Deep","Finn","Gill","Kelp","Mar","Naut","Ocean","Pearl","Reef","Siren","Tide","Wave","Glub","Squid","Octo","Angler","Merm","Splash","Drip","Brine","Shell","Barn","Urch","Mantis","Lagoon","Wrack","Grot"];
+  var TEMPLE_FEATS=["fin","antenna","spikes","tentacles","bubbles","earsT","star","leaf","wings","horn"];
+  function genTempleName(prefix){
+    var n,guard=0;
+    do{n=rpick(TPRE)+rpick(SUF);guard++;}while(usedNames[n]&&guard<500);
+    usedNames[n]=1;
+    return prefix?prefix+n:n;
+  }
+  function genTemple(prefix,tier,shiny,mathmega){
+    var p=shiny?rpick(SHINY_PALETTES):rpick(PALETTES);
+    return {
+      name:genTempleName(prefix), type:rpick(TEMPLE_TYPES),
+      body:p[0], belly:p[1], accent:p[2],
+      feat:rpick(TEMPLE_FEATS),
+      rx:34+Math.floor(rng()*10), ry:37+Math.floor(rng()*9),
+      mega:tier>0, tier:tier, shiny:!!shiny, mathmega:!!mathmega, temple:true
+    };
+  }
+  var TREGS=[]; while(TREGS.length<TEM_REG) TREGS.push(genTemple("",0,false,false));
+  var TMEGAS=[]; while(TMEGAS.length<TEM_MEGA) TMEGAS.push(genTemple("Mega ",1,false,false));
+  var TSUPERS=[]; while(TSUPERS.length<TEM_SUPER) TSUPERS.push(genTemple("Super Mega ",2,false,false));
+  var TULTRAS=[]; while(TULTRAS.length<TEM_ULTRA) TULTRAS.push(genTemple("Ultra Mega ",3,false,false));
+  var TSHINIES=[]; while(TSHINIES.length<TEM_SHINY) TSHINIES.push(genTemple("Shiny Mega ",4,true,false));
+  var TMATHS=[]; while(TMATHS.length<TEM_MATH) TMATHS.push(genTemple("Math Mega ",5,false,true));
+
+  var ALL=REGULARS.concat(MEGAS,SUPERS,ULTRAS,IREGS,IMEGAS,ISUPERS,IULTRAS,ISHINIES,TREGS,TMEGAS,TSUPERS,TULTRAS,TSHINIES,TMATHS); // index in ALL = the id stored in "caught"
+  function tierOf(idx){var c=ALL[idx];if(c.mathmega)return 5;if(c.shiny)return 4;return c.mega?(c.tier||1):0;}
+  function isIsland(idx){return idx>=L1_TOTAL&&idx<L2_TOTAL;}
+  function isTemple(idx){return idx>=L2_TOTAL;}
+  function worldOf(idx){return isTemple(idx)?3:(isIsland(idx)?2:1);}
 
   function pad3(n){n=String(n);while(n.length<3)n="0"+n;return n;}
   function dexLabel(idx){
@@ -624,15 +695,28 @@
     if(idx<REG_TOTAL+MEGA_TOTAL) return "MEGA #"+pad3(idx-REG_TOTAL+1);
     if(idx<REG_TOTAL+MEGA_TOTAL+SUPER_TOTAL) return "SUPER MEGA #"+pad3(idx-REG_TOTAL-MEGA_TOTAL+1);
     if(idx<L1_TOTAL) return "ULTRA MEGA #"+pad3(idx-REG_TOTAL-MEGA_TOTAL-SUPER_TOTAL+1);
-    var j=idx-L1_TOTAL;
-    if(j<ISL_REG) return "🏝️ #"+pad3(j+1);
-    j-=ISL_REG;
-    if(j<ISL_MEGA) return "🏝️ MEGA #"+pad3(j+1);
-    j-=ISL_MEGA;
-    if(j<ISL_SUPER) return "🏝️ SUPER MEGA #"+pad3(j+1);
-    j-=ISL_SUPER;
-    if(j<ISL_ULTRA) return "🏝️ ULTRA MEGA #"+pad3(j+1);
-    return "✨ SHINY MEGA #"+pad3(j-ISL_ULTRA+1);
+    if(idx<L2_TOTAL){
+      var j=idx-L1_TOTAL;
+      if(j<ISL_REG) return "🏝️ #"+pad3(j+1);
+      j-=ISL_REG;
+      if(j<ISL_MEGA) return "🏝️ MEGA #"+pad3(j+1);
+      j-=ISL_MEGA;
+      if(j<ISL_SUPER) return "🏝️ SUPER MEGA #"+pad3(j+1);
+      j-=ISL_SUPER;
+      if(j<ISL_ULTRA) return "🏝️ ULTRA MEGA #"+pad3(j+1);
+      return "✨ SHINY MEGA #"+pad3(j-ISL_ULTRA+1);
+    }
+    var k=idx-L2_TOTAL;
+    if(k<TEM_REG) return "🌊 #"+pad3(k+1);
+    k-=TEM_REG;
+    if(k<TEM_MEGA) return "🌊 MEGA #"+pad3(k+1);
+    k-=TEM_MEGA;
+    if(k<TEM_SUPER) return "🌊 SUPER MEGA #"+pad3(k+1);
+    k-=TEM_SUPER;
+    if(k<TEM_ULTRA) return "🌊 ULTRA MEGA #"+pad3(k+1);
+    k-=TEM_ULTRA;
+    if(k<TEM_SHINY) return "✨ SHINY MEGA #"+pad3(k+1);
+    return "🧮 MATH MEGA #"+pad3(k-TEM_SHINY+1);
   }
 
   // ================== CREATURE SVG ==================
@@ -652,6 +736,8 @@
     else if(c.feat==="star") feat='<line x1="60" y1="30" x2="60" y2="12" stroke="'+a+'" stroke-width="4"/><path d="M60 2 L63 10 L71 10 L64 15 L67 23 L60 18 L53 23 L56 15 L49 10 L57 10 Z" fill="'+a+'"/>';
     else if(c.feat==="wings") feat='<path d="M26 60 C4 40 6 24 30 36 C38 40 40 50 38 58 Z" fill="'+a+'"/><path d="M94 60 C116 40 114 24 90 36 C82 40 80 50 82 58 Z" fill="'+a+'"/>';
     else if(c.feat==="flame") feat='<path d="M60 2 C52 14 66 16 60 30 C74 26 70 12 60 2 Z" fill="'+a+'"/><path d="M48 12 C44 20 52 22 48 32 C58 28 55 17 48 12 Z" fill="'+a+'" opacity=".8"/>';
+    else if(c.feat==="tentacles") feat='<path d="M34 100 C28 110 20 112 16 106 M46 104 C44 114 34 118 30 112 M74 104 C76 114 86 118 90 112 M86 100 C92 110 100 112 104 106" stroke="'+a+'" stroke-width="5" fill="none" stroke-linecap="round"/>';
+    else if(c.feat==="bubbles") feat='<circle cx="30" cy="26" r="6" fill="none" stroke="'+a+'" stroke-width="2.5"/><circle cx="44" cy="14" r="4" fill="none" stroke="'+a+'" stroke-width="2"/><circle cx="86" cy="20" r="5" fill="none" stroke="'+a+'" stroke-width="2.5"/><circle cx="96" cy="34" r="3" fill="none" stroke="'+a+'" stroke-width="2"/>';
 
     var aura="";
     if(c.mega||c.legend){
@@ -669,6 +755,15 @@
       aura+='<circle cx="60" cy="64" r="52" fill="none" stroke="'+a+'" stroke-width="2" stroke-dasharray="7 6" opacity=".7"/>'+
             '<path d="M22 8 L25 15 L32 17 L25 19 L22 26 L19 19 L12 17 L19 15 Z" fill="'+a+'"/>'+
             '<path d="M60 118 m-3 0 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0" fill="'+a+'"/>';
+    }
+    if(c.mathmega){
+      aura+='<circle cx="60" cy="64" r="56" fill="none" stroke="'+a+'" stroke-width="2.5" opacity=".55"/>'+
+            '<text x="14" y="24" font-size="20" font-weight="bold" fill="'+a+'">×</text>'+
+            '<text x="96" y="20" font-size="18" font-weight="bold" fill="'+a+'">+</text>'+
+            '<text x="6" y="78" font-size="18" font-weight="bold" fill="'+a+'">÷</text>'+
+            '<text x="102" y="86" font-size="18" font-weight="bold" fill="'+a+'">=</text>'+
+            '<text x="94" y="112" font-size="16" font-weight="bold" fill="'+a+'">7</text>'+
+            '<text x="16" y="110" font-size="16" font-weight="bold" fill="'+a+'">12</text>';
     }
     if(c.shiny){
       aura+='<circle cx="60" cy="64" r="55" fill="none" stroke="#ffffff" stroke-width="2" opacity=".6"/>'+
@@ -709,7 +804,7 @@
   var MEGA_CHEERS=["MEGA CATCH!!","UNBELIEVABLE!!","LEGENDARY!!","MEGA POWER!!","3 IN A ROW — MEGA!!"];
 
   // ================== STATE ==================
-  var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0,muted:false,world:1,l1:null};
+  var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0,muted:false,world:1,l1:null,l2:null};
   var me=null; // {name, slug, pin, admin}
   var online=null; // null unknown, true, false
 
@@ -777,6 +872,19 @@
     seq.push([2637,0.85,0.55,"triangle",0.15]);
     play(seq);
   }
+  function sfxMath(){
+    // counting-up scale, then a triumphant chord — the Math Mega fanfare
+    var seq=[];
+    [262,294,330,349,392,440,494,523].forEach(function(f,i){
+      seq.push([f,i*0.09,0.12,"square",0.13]);
+    });
+    [523,659,784,1047].forEach(function(f){
+      seq.push([f,0.85,0.5,"triangle",0.13]);
+      seq.push([f*2,0.95,0.4,"triangle",0.09]);
+    });
+    seq.push([2093,1.4,0.6,"triangle",0.15]);
+    play(seq);
+  }
   function sfxShiny(){
     var seq=[];
     [1568,1976,2349,2637,3136].forEach(function(f,i){
@@ -826,7 +934,7 @@
     else{t.textContent="…";t.className="cloudTag";}
   }
   function playerDataStr(){
-    return JSON.stringify({pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught,l1:state.l1||null});
+    return JSON.stringify({pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught,l1:state.l1||null,l2:state.l2||null});
   }
   function cloudWrite(){
     return fsFetch(FS_BASE+"/players/"+me.slug+"?key="+FS_KEY,{
@@ -846,7 +954,7 @@
 
   function localSave(){
     if(!me) return;
-    try{localStorage.setItem("mmlocal_"+me.slug,JSON.stringify({name:me.name,pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught,l1:state.l1||null}));}catch(e){}
+    try{localStorage.setItem("mmlocal_"+me.slug,JSON.stringify({name:me.name,pin:me.pin,admin:!!me.admin,right:state.right,wrong:state.wrong,caught:state.caught,l1:state.l1||null,l2:state.l2||null}));}catch(e){}
   }
   function localLoad(slug){
     try{var s=localStorage.getItem("mmlocal_"+slug);return s?JSON.parse(s):null;}catch(e){return null;}
@@ -878,7 +986,7 @@
           docName:doc.name,
           name:(f.mmName&&f.mmName.stringValue)||"?",
           right:d.right||0, wrong:d.wrong||0,
-          caught:(d.caught||[]), admin:!!d.admin, l1:d.l1||null
+          caught:(d.caught||[]), admin:!!d.admin, l1:d.l1||null, l2:d.l2||null
         });
       });
       return rows;
@@ -888,14 +996,15 @@
   // ================== DEX ==================
   var dexgrid=$("#dexgrid"), megagrid=$("#megagrid"), supergrid=$("#supergrid"), ultragrid=$("#ultragrid");
   var idexgrid=$("#idexgrid"), imegagrid=$("#imegagrid"), isupergrid=$("#isupergrid"), iultragrid=$("#iultragrid"), ishinygrid=$("#ishinygrid");
+  var tdexgrid=$("#tdexgrid"), tmegagrid=$("#tmegagrid"), tsupergrid=$("#tsupergrid"), tultragrid=$("#tultragrid"), tshinygrid=$("#tshinygrid"), tmathgrid=$("#tmathgrid");
   function gridFor(idx){
-    return isIsland(idx)
-      ? [idexgrid,imegagrid,isupergrid,iultragrid,ishinygrid][tierOf(idx)]
-      : [dexgrid,megagrid,supergrid,ultragrid][tierOf(idx)];
+    if(isTemple(idx)) return [tdexgrid,tmegagrid,tsupergrid,tultragrid,tshinygrid,tmathgrid][tierOf(idx)];
+    if(isIsland(idx)) return [idexgrid,imegagrid,isupergrid,iultragrid,ishinygrid][tierOf(idx)];
+    return [dexgrid,megagrid,supergrid,ultragrid][tierOf(idx)];
   }
   function slotClass(idx){
     var t=tierOf(idx);
-    return "slot empty"+(t===1?" megaslot":t===2?" superslot":t===3?" ultraslot":t===4?" shinyslot":"");
+    return "slot empty"+(t===1?" megaslot":t===2?" superslot":t===3?" ultraslot":t===4?" shinyslot":t===5?" mathslot":"");
   }
   for(var i=0;i<ALL.length;i++){
     var s=document.createElement("div");
@@ -915,35 +1024,56 @@
   function regCount(){return state.caught.filter(function(i){return i<REG_TOTAL;}).length;}
   function l1Count(){return state.caught.filter(function(i){return i<L1_TOTAL;}).length;}
   function l1Complete(){return l1Count()===L1_TOTAL;}
-  function tierCount(t,island){
-    return state.caught.filter(function(i){return tierOf(i)===t && isIsland(i)===!!island;}).length;
+  function l2Complete(){return l1Complete() && state.caught.filter(isIsland).length===ISL_TOTAL;}
+  function tierCount(t,world){
+    return state.caught.filter(function(i){return tierOf(i)===t && worldOf(i)===world;}).length;
+  }
+  function shownScore(){
+    // each land keeps its own score; earlier lands stay frozen
+    if(state.world===3 && state.l2) return {r:state.right-state.l2.right, w:state.wrong-state.l2.wrong, c:state.caught.filter(isTemple).length};
+    if(state.world===2 && state.l1) return {r:state.right-state.l1.right, w:state.wrong-state.l1.wrong, c:state.caught.filter(isIsland).length};
+    return {r:state.right, w:state.wrong, c:state.caught.length};
   }
   function renderProgress(){
-    // On the island the top chips show the island-only score; Level 1's stays frozen
-    var onIsl = state.world===2 && state.l1;
-    $("#sRight").textContent = onIsl ? state.right-state.l1.right : state.right;
-    $("#sWrong").textContent = onIsl ? state.wrong-state.l1.wrong : state.wrong;
-    $("#sCaught").textContent = onIsl ? state.caught.filter(isIsland).length : state.caught.length;
+    var sc=shownScore();
+    $("#sRight").textContent=sc.r;
+    $("#sWrong").textContent=sc.w;
+    $("#sCaught").textContent=sc.c;
     $("#dexCount").textContent=regCount()+" / "+REG_TOTAL;
-    $("#megaCount").textContent=tierCount(1,false)+" / "+MEGA_TOTAL;
-    $("#superCount").textContent=tierCount(2,false)+" / "+SUPER_TOTAL;
-    $("#ultraCount").textContent=tierCount(3,false)+" / "+ULTRA_TOTAL;
-    $("#idexCount").textContent=tierCount(0,true)+" / "+ISL_REG;
-    $("#imegaCount").textContent=tierCount(1,true)+" / "+ISL_MEGA;
-    $("#isuperCount").textContent=tierCount(2,true)+" / "+ISL_SUPER;
-    $("#iultraCount").textContent=tierCount(3,true)+" / "+ISL_ULTRA;
-    $("#ishinyCount").textContent=tierCount(4,true)+" / "+ISL_SHINY;
+    $("#megaCount").textContent=tierCount(1,1)+" / "+MEGA_TOTAL;
+    $("#superCount").textContent=tierCount(2,1)+" / "+SUPER_TOTAL;
+    $("#ultraCount").textContent=tierCount(3,1)+" / "+ULTRA_TOTAL;
+    $("#idexCount").textContent=tierCount(0,2)+" / "+ISL_REG;
+    $("#imegaCount").textContent=tierCount(1,2)+" / "+ISL_MEGA;
+    $("#isuperCount").textContent=tierCount(2,2)+" / "+ISL_SUPER;
+    $("#iultraCount").textContent=tierCount(3,2)+" / "+ISL_ULTRA;
+    $("#ishinyCount").textContent=tierCount(4,2)+" / "+ISL_SHINY;
+    $("#tdexCount").textContent=tierCount(0,3)+" / "+TEM_REG;
+    $("#tmegaCount").textContent=tierCount(1,3)+" / "+TEM_MEGA;
+    $("#tsuperCount").textContent=tierCount(2,3)+" / "+TEM_SUPER;
+    $("#tultraCount").textContent=tierCount(3,3)+" / "+TEM_ULTRA;
+    $("#tshinyCount").textContent=tierCount(4,3)+" / "+TEM_SHINY;
+    $("#tmathCount").textContent=tierCount(5,3)+" / "+TEM_MATH;
   }
   function applyWorld(){
-    var w=l1Complete()?2:1;
-    var flipped = state.world===1 && w===2;
+    var w=l2Complete()?3:(l1Complete()?2:1);
+    var prev=state.world;
     state.world=w;
     document.body.classList.toggle("island",w===2);
-    $("#lvlBadge").style.display=w===2?"inline-flex":"none";
-    $("#islandDex").style.display=w===2?"block":"none";
-    $("#l1sum").textContent = w===2 ? "⭐ Level 1 collection (complete!)" : "Monster Dex — Level 1";
-    if(flipped) $("#l1wrap").open=false;
-    return flipped;
+    document.body.classList.toggle("temple",w===3);
+    var badge=$("#lvlBadge");
+    badge.style.display=w>1?"inline-flex":"none";
+    badge.textContent=w===3?"🌊 Level 3":"🏝️ Level 2";
+    $("#templeDex").style.display=w===3?"block":"none";
+    $("#islandDex").style.display=w>=2?"block":"none";
+    $("#l1sum").textContent = w>1 ? "⭐ Level 1 collection (complete!)" : "Monster Dex — Level 1";
+    var l2sum=$("#l2sum");
+    l2sum.style.display=w===3?"block":"none";
+    l2sum.textContent="🏝️ Island collection (complete!)";
+    if(w<3) $("#l2wrap").open=true;
+    if(prev===1&&w>1) $("#l1wrap").open=false;
+    if(prev!==3&&w===3) $("#l2wrap").open=false;
+    return prev<w?{from:prev,to:w}:null;
   }
   function renderDexAll(){
     document.querySelectorAll(".slot").forEach(function(s){
@@ -1007,7 +1137,7 @@
     });
     var fb=$("#feedback");fb.className="feedback";fb.textContent="";
     $("#nextBtn").classList.remove("show");
-    if(state.world===2) startTimer(); else stopTimer();
+    if(state.world>=2) startTimer(); else stopTimer();
   }
 
   // 5-second answer timer — island (Level 2) only, with pause support
@@ -1038,7 +1168,7 @@
     armTimer();
   }
   function pauseGame(){
-    if(state.world!==2 || state.answered || paused || !qTimer) return;
+    if(state.world<2 || state.answered || paused || !qTimer) return;
     clearInterval(qTimer); qTimer=null;
     pauseRemain=Math.max(500, qDeadline-Date.now());
     paused=true;
@@ -1101,13 +1231,15 @@
 
   function streakTier(s){
     if(s<=0||s%3!==0) return 0;
-    if(state.world===2 && s%12===0) return 4;
+    if(state.world===3 && s%15===0) return 5;
+    if(state.world>=2 && s%12===0) return 4;
     if(s%9===0) return 3;
     if(s%6===0) return 2;
     return 1;
   }
   function milestoneName(m){
-    if(state.world===2 && m%12===0) return "✨ SHINY MEGA";
+    if(state.world===3 && m%15===0) return "🧮 MATH MEGA";
+    if(state.world>=2 && m%12===0) return "✨ SHINY MEGA";
     return m%9===0?"ULTRA MEGA":(m%6===0?"SUPER MEGA":"MEGA");
   }
   function updateStreak(){
@@ -1127,10 +1259,9 @@
   // ================== REWARD ==================
   function reward(){
     var tier=streakTier(state.streak);
-    var wantIsland = state.world===2;
     var pick=[], backup=[];
     for(var i=0;i<ALL.length;i++){
-      if(tierOf(i)!==tier || isIsland(i)!==wantIsland) continue;
+      if(tierOf(i)!==tier || worldOf(i)!==state.world) continue;
       (state.caught.indexOf(i)<0?pick:backup).push(i);
     }
     var from = pick.length?pick:backup;
@@ -1140,43 +1271,56 @@
     if(isNew){
       state.caught.push(idx);
       fillSlot(idx,true);
-      renderProgress();
     }
-    var unlockedIsland = applyWorld(); // true only on the catch that completes Level 1
-    if(unlockedIsland && !state.l1) state.l1={right:state.right,wrong:state.wrong}; // freeze the Level 1 score
+    var unlock = applyWorld(); // non-null only on the catch that completes a land
+    if(unlock){
+      if(unlock.to>=2 && !state.l1) state.l1={right:state.right,wrong:state.wrong}; // freeze Level 1 score
+      if(unlock.to===3 && !state.l2) state.l2={right:state.right,wrong:state.wrong}; // freeze island score
+    }
     renderProgress();
-    var finished151 = isNew && !c.mega && !c.island && regCount()===REG_TOTAL;
-    var finishedIsland = isNew && c.island && state.caught.filter(isIsland).length===ISL_REG+ISL_MEGA+ISL_SUPER+ISL_ULTRA+ISL_SHINY;
+    var toIsland = unlock && unlock.to===2;
+    var toTemple = unlock && unlock.to===3;
+    var finished151 = isNew && !c.mega && !c.island && !c.temple && regCount()===REG_TOTAL;
+    var finishedTemple = isNew && c.temple && state.caught.filter(isTemple).length===TEM_TOTAL;
     $("#rewardMonster").innerHTML=svgCreature(c);
     $("#rewardNum").textContent=dexLabel(idx);
     $("#rewardName").textContent=c.name;
     $("#rewardType").textContent=(isNew?"NEW! ":"")+c.type+" type"+(tier>0?" · "+TIER_NAMES[tier]:(c.legend?" · LEGENDARY":""));
     var cheers = tier>0 ? MEGA_CHEERS : CHEERS;
     $("#rewardCheer").textContent =
-      unlockedIsland ? "🏝️ LEVEL 2 UNLOCKED — WELCOME TO MONSTER ISLAND!"
-      : finishedIsland ? "🏆 YOU BEAT MONSTER ISLAND — CHAMPION!! 🏆"
+      toTemple ? "🌊 LEVEL 3 UNLOCKED — DIVE INTO THE UNDERWATER TEMPLE CITY!"
+      : toIsland ? "🏝️ LEVEL 2 UNLOCKED — WELCOME TO MONSTER ISLAND!"
+      : finishedTemple ? "🏆 YOU CONQUERED THE TEMPLE CITY — ULTIMATE CHAMPION!! 🏆"
       : finished151 ? "🎉 ALL 151 CAUGHT — YOU DID IT!! 🎉"
-      : (tier===4 ? "12 IN A ROW — ✨ SHINY MEGA ✨!!!" : tier===3 ? "9 IN A ROW — ULTRA MEGA!!!" : tier===2 ? "6 IN A ROW — SUPER MEGA!!" : cheers[randInt(0,cheers.length-1)]);
+      : (tier===5 ? "15 IN A ROW — 🧮 MATH MEGA 🧮!!!" : tier===4 ? "12 IN A ROW — ✨ SHINY MEGA ✨!!!" : tier===3 ? "9 IN A ROW — ULTRA MEGA!!!" : tier===2 ? "6 IN A ROW — SUPER MEGA!!" : cheers[randInt(0,cheers.length-1)]);
     var rc=$("#reward");
-    rc.classList.remove("megaGlow","superGlow","ultraGlow","shinyGlow");
-    if(tier===4) rc.classList.add("shinyGlow");
+    rc.classList.remove("megaGlow","superGlow","ultraGlow","shinyGlow","mathGlow");
+    if(tier===5) rc.classList.add("mathGlow");
+    else if(tier===4) rc.classList.add("shinyGlow");
     else if(tier===3) rc.classList.add("ultraGlow");
     else if(tier===2) rc.classList.add("superGlow");
-    else if(tier===1||finished151||unlockedIsland||finishedIsland) rc.classList.add("megaGlow");
+    else if(tier===1||finished151||unlock||finishedTemple) rc.classList.add("megaGlow");
     rc.classList.add("show");
     $("#caughtLabel").textContent =
-      unlockedIsland ? "🏝️ MONSTER ISLAND UNLOCKED! 🏝️"
-      : finishedIsland ? "✦ ISLAND COMPLETE — GAME CHAMPION! ✦"
+      toTemple ? "🌊 UNDERWATER TEMPLE UNLOCKED! 🌊"
+      : toIsland ? "🏝️ MONSTER ISLAND UNLOCKED! 🏝️"
+      : finishedTemple ? "✦ TEMPLE COMPLETE — ULTIMATE CHAMPION! ✦"
       : finished151 ? "✦ MONSTER DEX COMPLETE! ✦"
       : (tier>0?"✦ "+TIER_NAMES[tier]+" CAUGHT! ✦":"✦ You caught a monster! ✦");
-    if(tier===4||unlockedIsland||finishedIsland) sfxShiny();
+    if(tier===5) sfxMath();
+    else if(tier===4||unlock||finishedTemple) sfxShiny();
     else if(tier===3) sfxUltra();
     else if(tier===2) sfxSuper();
     else if(tier===1||finished151) sfxMega();
     else sfxCatch();
-    var islandAllCaught = state.caught.filter(isIsland).length===ISL_REG+ISL_MEGA+ISL_SUPER+ISL_ULTRA+ISL_SHINY;
-    $("#rewardTeaser").style.display = islandAllCaught ? "block" : "none";
-    if(finishedIsland) pendingParty=true;
+    var templeAllCaught = state.caught.filter(isTemple).length===TEM_TOTAL;
+    $("#rewardTeaser").style.display = templeAllCaught ? "block" : "none";
+    if(toTemple || finishedTemple){
+      $("#partySub").innerHTML = finishedTemple
+        ? "You conquered the <b>Underwater Temple City</b>!<br>Every single monster caught — all 761!"
+        : "You beat <b>Monster Island</b>!<br>The Underwater Temple City awaits below the waves…";
+      pendingParty=true;
+    }
     saveSoon();
   }
 
@@ -1184,21 +1328,27 @@
   var BIO_HOME=["hides in the tall grass","naps on warm sunny rocks","zooms around in the clouds","lives beside a bubbling stream","digs cozy tunnels underground","floats above the treetops","surfs the biggest waves","camps out near the old volcano","builds forts out of leaves","hangs out under rainbows"];
   var BIO_LIKE=["snacking on berries","math races with friends","chasing fireflies at night","collecting shiny pebbles","singing songs at sunset","practicing dance moves","playing hide-and-seek","telling silly jokes","splashing in puddles","drawing in the sand"];
   var BIO_POWER=["It can jump higher than a house","It remembers every times table it has ever heard","Its footsteps sparkle in the dark","It cheers extra loud when you answer fast","It can smell a wrong answer from a mile away","Its giggle makes flowers grow","It once raced a shooting star and almost won","It does a backflip every time someone gets a streak"];
+  var SEA_HOME=["lives in a glowing coral cave","sleeps inside a giant clam shell","patrols the sunken temple halls","rides the deep ocean currents","hides in a forest of kelp","guards an old treasure chest","naps on the temple's marble steps","drifts through schools of silver fish","burrows in the soft sea sand","circles the tallest temple tower"];
+  var SEA_LIKE=["blowing enormous bubbles","racing seahorses","collecting lost pearls","singing whale songs","tidying its shell collection","playing tag with dolphins","polishing the temple statues","hunting for shipwreck treasure","doing underwater math races","gliding through the moonlit water"];
   var STAT_NAMES=["Power","Speed","Smarts","Sparkle"];
   function monsterInfo(idx){
     var r=mulberry32(((idx+1)*2654435761)^0x9E3779B9);
     function p(a){return a[Math.floor(r()*a.length)];}
     var c=ALL[idx];
-    var boost=c.shiny?4:(c.tier===3?4:c.tier===2?3:c.tier===1?2:(c.legend?3:0));
+    var boost=c.mathmega?5:c.shiny?4:(c.tier===3?4:c.tier===2?3:c.tier===1?2:(c.legend?3:0));
     var stats=STAT_NAMES.map(function(){return Math.min(10,1+Math.floor(r()*6)+boost);});
     if(c.shiny) stats[3]=10;
+    if(c.mathmega) stats[2]=10; // Math Megas always have perfect Smarts
     var hFt=Math.round((1+r()*5+(c.mega?2:0))*10)/10;
     var wLb=Math.round(5+r()*120+(c.mega?80:0));
     var table=2+Math.floor(r()*11);
-    var bio=c.name+" "+p(BIO_HOME)+" and loves "+p(BIO_LIKE)+". "+p(BIO_POWER)+"!";
+    var bio=c.temple
+      ? c.name+" "+p(SEA_HOME)+" and loves "+p(SEA_LIKE)+". "+p(BIO_POWER)+"!"
+      : c.name+" "+p(BIO_HOME)+" and loves "+p(BIO_LIKE)+". "+p(BIO_POWER)+"!";
     return {stats:stats,hFt:hFt,wLb:wLb,table:table,bio:bio};
   }
   function rarityLabel(c){
+    if(c.mathmega) return "🧮 Math Mega";
     if(c.shiny) return "✨ Shiny Mega";
     if(c.tier===3) return "Ultra Mega";
     if(c.tier===2) return "Super Mega";
@@ -1218,7 +1368,7 @@
     chips+='<span class="mchip">'+(caught?escapeHTML(c.type)+" type":"? type")+'</span>';
     var rare=rarityLabel(c);
     if(rare!=="Common") chips+='<span class="mchip '+(c.shiny?"shiny":"rare")+'">'+rare+'</span>';
-    chips+='<span class="mchip">'+(c.island?"🏝️ Island":"⭐ Level 1")+'</span>';
+    chips+='<span class="mchip">'+(c.temple?"🌊 Temple City":c.island?"🏝️ Island":"⭐ Level 1")+'</span>';
     $("#mcChips").innerHTML=chips;
     if(caught){
       var info=monsterInfo(idx);
@@ -1353,15 +1503,27 @@
       return h+'</table>';
     }
 
-    // Island board: only players who finished Level 1; island-only score
+    function isTempleDone(r){return isDone(r)&&r.caught.filter(isIsland).length===ISL_TOTAL;}
+    // Island board: only players who finished Level 1; island-only score (frozen once in the temple)
     var islanders=rows.filter(isDone);
-    function islRight(r){return r.l1?(r.right||0)-(r.l1.right||0):(r.right||0);}
-    function islWrong(r){return r.l1?(r.wrong||0)-(r.l1.wrong||0):(r.wrong||0);}
+    function islRight(r){var top=r.l2?(r.l2.right||0):(r.right||0);return r.l1?top-(r.l1.right||0):top;}
+    function islWrong(r){var top=r.l2?(r.l2.wrong||0):(r.wrong||0);return r.l1?top-(r.l1.wrong||0):top;}
     islanders.sort(function(a,b){
       var ad=a.caught.filter(function(x){return isIsland(x)&&tierOf(x)===0;}).length;
       var bd=b.caught.filter(function(x){return isIsland(x)&&tierOf(x)===0;}).length;
       if(bd!==ad) return bd-ad;
       return islRight(b)-islRight(a);
+    });
+
+    // Temple board: only players who finished the island; temple-only score
+    var templars=rows.filter(isTempleDone);
+    function temRight(r){return r.l2?(r.right||0)-(r.l2.right||0):(r.right||0);}
+    function temWrong(r){return r.l2?(r.wrong||0)-(r.l2.wrong||0):(r.wrong||0);}
+    templars.sort(function(a,b){
+      var ad=a.caught.filter(function(x){return isTemple(x)&&tierOf(x)===0;}).length;
+      var bd=b.caught.filter(function(x){return isTemple(x)&&tierOf(x)===0;}).length;
+      if(bd!==ad) return bd-ad;
+      return temRight(b)-temRight(a);
     });
 
     // Level 1 board: everyone; finished players keep their frozen score
@@ -1376,22 +1538,36 @@
     });
 
     var h='';
+    if(templars.length){
+      h+='<div class="bhead">🌊 Underwater Temple City — Level 3</div>';
+      h+=table(templars,function(r){
+        var tem=r.caught.filter(function(x){return isTemple(x)&&tierOf(x)===0;}).length;
+        var megas=r.caught.filter(function(x){return isTemple(x)&&tierOf(x)>0&&tierOf(x)<4;}).length;
+        var shinies=r.caught.filter(function(x){return isTemple(x)&&tierOf(x)===4;}).length;
+        var maths=r.caught.filter(function(x){return tierOf(x)===5;}).length;
+        var sub='';
+        if(megas) sub+=megas+' mega'+(megas>1?'s':'');
+        if(shinies) sub+=(sub?' · ':'')+'✨ '+shinies;
+        if(maths) sub+=(sub?' · ':'')+'🧮 '+maths;
+        return {marks:(r.admin?' 👑':''),sub:sub,dex:tem+'/'+TEM_REG,right:temRight(r),wrong:temWrong(r)};
+      },false);
+    }
     if(islanders.length){
       h+='<div class="bhead">🏝️ Monster Island — Level 2</div>';
       h+=table(islanders,function(r){
         var isl=r.caught.filter(function(x){return isIsland(x)&&tierOf(x)===0;}).length;
         var megas=r.caught.filter(function(x){return isIsland(x)&&tierOf(x)>0&&tierOf(x)<4;}).length;
-        var shinies=r.caught.filter(function(x){return tierOf(x)===4;}).length;
+        var shinies=r.caught.filter(function(x){return isIsland(x)&&tierOf(x)===4;}).length;
         var sub='';
         if(megas) sub+=megas+' mega'+(megas>1?'s':'');
         if(shinies) sub+=(sub?' · ':'')+'✨ '+shinies+' shiny';
-        return {marks:(r.admin?' 👑':''),sub:sub,dex:isl+'/'+ISL_REG,right:islRight(r),wrong:islWrong(r)};
+        return {marks:(isTempleDone(r)?' 🌊':'')+(r.admin?' 👑':''),sub:sub,dex:isl+'/'+ISL_REG,right:islRight(r),wrong:islWrong(r)};
       },false);
     }
     h+='<div class="bhead">⭐ Level 1'+(islanders.length?'':' — catch everything to reach the island!')+'</div>';
     h+=table(l1rows,function(r){
       var regs=r.caught.filter(function(x){return x<REG_TOTAL;}).length;
-      var megas=r.caught.filter(function(x){return !isIsland(x)&&tierOf(x)>0;}).length;
+      var megas=r.caught.filter(function(x){return worldOf(x)===1&&tierOf(x)>0;}).length;
       var done=isDone(r);
       return {
         marks:(done?' 🏝️':'')+(r.admin?' 👑':''),
@@ -1410,7 +1586,7 @@
         var k=localStorage.key(i);
         if(k&&k.indexOf("mmlocal_")===0){
           var d=JSON.parse(localStorage.getItem(k));
-          rows.push({docName:null,name:d.name,right:d.right||0,wrong:d.wrong||0,caught:d.caught||[],admin:!!d.admin,l1:d.l1||null});
+          rows.push({docName:null,name:d.name,right:d.right||0,wrong:d.wrong||0,caught:d.caught||[],admin:!!d.admin,l1:d.l1||null,l2:d.l2||null});
         }
       }
     }catch(e){}
@@ -1453,7 +1629,7 @@
         for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("mmlocal_")===0)kill.push(k);}
         kill.forEach(function(k){localStorage.removeItem(k);});
       }catch(e){}
-      state.right=0;state.wrong=0;state.caught=[];state.streak=0;state.world=1;
+      state.right=0;state.wrong=0;state.caught=[];state.streak=0;state.world=1;state.l1=null;state.l2=null;
       renderProgress();renderDexAll();updateStreak();applyWorld();saveSoon();
       openBoard();
     }).catch(function(){alert("Could not clear right now — try again.");});
@@ -1477,11 +1653,13 @@
     state.wrong=d.wrong||0;
     state.caught=(d.caught||[]).filter(function(i){return i>=0&&i<ALL.length;});
     state.l1=d.l1||null;
+    state.l2=d.l2||null;
     state.streak=0;
     state.world=1;
     applyWorld();
-    // players who unlocked before score-freezing existed get a snapshot now
-    if(state.world===2 && !state.l1) state.l1={right:state.right,wrong:state.wrong};
+    // players who unlocked before score-freezing existed get snapshots now
+    if(state.world>=2 && !state.l1) state.l1={right:state.right,wrong:state.wrong};
+    if(state.world===3 && !state.l2) state.l2={right:state.right,wrong:state.wrong};
     renderProgress();renderDexAll();updateStreak();
   }
   function finishLogin(){
@@ -1570,7 +1748,7 @@
     if(!me) return;
     if(!confirm("Start over, "+me.name+"? This clears YOUR score and monsters (other players keep theirs).")) return;
     stopTimer();
-    state.right=0;state.wrong=0;state.caught=[];state.streak=0;state.world=1;
+    state.right=0;state.wrong=0;state.caught=[];state.streak=0;state.world=1;state.l1=null;state.l2=null;
     renderProgress();renderDexAll();updateStreak();applyWorld();
     saveSoon();
     $("#start").classList.add("show");
