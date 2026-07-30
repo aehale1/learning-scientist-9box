@@ -129,6 +129,36 @@
   .slot.superslot.empty::after{content:"S";color:#ff8c1f;font-size:12px}
   .slot.ultraslot{border:2px dashed var(--aqua);background:#082e28}
   .slot.ultraslot.empty::after{content:"U";color:var(--aqua);font-size:12px}
+  .slot.shinyslot{border:2px dashed #fff;background:#3a3618}
+  .slot.shinyslot.empty::after{content:"✨";font-size:12px}
+
+  /* Level 2: Monster Island theme */
+  body.island{--night:#02363a;--night2:#0a5e5a;--panel:#0c4f4a;--panel2:#127a63;--muted:#a8e2d8}
+  body.island .slot{background:#073b36;border-color:#1b6a5f}
+  body.island .slot.empty::after{color:#2a9a88}
+  body.island .slot.megaslot{background:#31240f;border-color:var(--sun)}
+  body.island .slot.superslot{background:#301a08;border-color:#ff8c1f}
+  body.island .slot.ultraslot{background:#082e28;border-color:var(--aqua)}
+  body.island .slot.shinyslot{background:#3a3618;border-color:#fff}
+  body.island .ans{background:linear-gradient(180deg,#fff,#ffedc2);color:#4a3006;box-shadow:0 6px 0 #d8b87f, 0 10px 18px -8px #000a}
+  body.island .ans:active{box-shadow:0 2px 0 #d8b87f}
+  .lvl{display:none;align-items:center;gap:4px;font-size:11px;font-weight:900;padding:4px 10px;border-radius:999px;background:linear-gradient(180deg,#1a8a6a,#0d5a44);border:1px solid #33e6c9;color:#d2fff6}
+
+  /* Question timer (island only) */
+  .timerwrap{display:none;align-items:center;gap:10px}
+  .timerbar{flex:1;height:12px;border-radius:999px;background:#0006;overflow:hidden;border:1px solid var(--edge)}
+  .timerfill{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,var(--good),var(--sun) 60%,var(--bad));transition:width .1s linear}
+  .timersec{font-size:16px;font-weight:900;color:var(--sun);min-width:22px;text-align:center;font-variant-numeric:tabular-nums}
+
+  /* Level 1 collection wrapper on island */
+  .l1wrap>summary{cursor:pointer;list-style:none;font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:700;padding:4px 0}
+  .l1wrap>summary::-webkit-details-marker{display:none}
+  .l1wrap>summary::before{content:"▸ ";color:var(--sun)}
+  .l1wrap[open]>summary::before{content:"▾ "}
+
+  .reward.shinyGlow{background:radial-gradient(600px 500px at 50% 40%, #9a8a1a 0%, #7a5a8a99 55%, #07182fee 100%)}
+  .reward.shinyGlow .monster{width:255px;height:255px;filter:drop-shadow(0 0 36px #ffffffdd) drop-shadow(0 14px 22px #000a)}
+  .reward.shinyGlow .mname{color:#fff;text-shadow:0 0 20px #ffd700}
   .dexnote{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
 
   .bar{display:flex;gap:10px}
@@ -249,13 +279,20 @@
 
   <div class="playerRow">
     <span class="playerTag" id="playerTag">Not signed in</span>
-    <span class="cloudTag" id="cloudTag">…</span>
+    <span style="display:flex;gap:6px;align-items:center">
+      <span class="lvl" id="lvlBadge">🏝️ Level 2</span>
+      <span class="cloudTag" id="cloudTag">…</span>
+    </span>
   </div>
 
   <div class="card" id="card">
     <div class="qhead">
       <span class="qtag" id="qtag">Multiplication</span>
       <span class="streak" id="streak">🔥 Streak 0</span>
+    </div>
+    <div class="timerwrap" id="timerwrap">
+      <div class="timerbar"><div class="timerfill" id="timerfill"></div></div>
+      <span class="timersec" id="timersec">5</span>
     </div>
     <div class="question" id="question">— <span class="op">×</span> — <span class="eq">=</span> ?</div>
     <div class="answers" id="answers"></div>
@@ -264,15 +301,32 @@
   </div>
 
   <div class="dex">
-    <h2>Monster Dex <span id="dexCount">0 / 151</span></h2>
-    <div class="dexgrid" id="dexgrid"></div>
-    <h2 style="margin-top:14px">Mega Dex <span id="megaCount">0 / 24</span></h2>
-    <div class="dexgrid" id="megagrid"></div>
-    <h2 style="margin-top:14px">Super Mega Dex <span id="superCount">0 / 12</span></h2>
-    <div class="dexgrid" id="supergrid"></div>
-    <h2 style="margin-top:14px">Ultra Mega Dex <span id="ultraCount">0 / 8</span></h2>
-    <div class="dexgrid" id="ultragrid"></div>
-    <div class="dexnote">Catch all <b>151</b> monsters by answering questions. Streaks earn bonus catches: <b style="color:var(--sun)">3 in a row = MEGA</b> · <b style="color:#ff8c1f">6 in a row = SUPER MEGA</b> · <b style="color:var(--aqua)">9 in a row = ULTRA MEGA</b>!</div>
+    <div id="islandDex" style="display:none">
+      <h2>🏝️ Island Dex <span id="idexCount">0 / 200</span></h2>
+      <div class="dexgrid" id="idexgrid"></div>
+      <h2 style="margin-top:14px">🏝️ Mega Dex <span id="imegaCount">0 / 24</span></h2>
+      <div class="dexgrid" id="imegagrid"></div>
+      <h2 style="margin-top:14px">🏝️ Super Mega Dex <span id="isuperCount">0 / 12</span></h2>
+      <div class="dexgrid" id="isupergrid"></div>
+      <h2 style="margin-top:14px">🏝️ Ultra Mega Dex <span id="iultraCount">0 / 8</span></h2>
+      <div class="dexgrid" id="iultragrid"></div>
+      <h2 style="margin-top:14px">✨ Shiny Mega Dex <span id="ishinyCount">0 / 10</span></h2>
+      <div class="dexgrid" id="ishinygrid"></div>
+      <div class="dexnote">🏝️ <b>Island rules:</b> only <b>5 seconds</b> per question! Streaks: <b style="color:var(--sun)">3 = MEGA</b> · <b style="color:#ff8c1f">6 = SUPER</b> · <b style="color:var(--aqua)">9 = ULTRA</b> · <b style="color:#fff">12 in a row = ✨ SHINY MEGA ✨</b></div>
+      <hr style="border:none;border-top:1px solid var(--edge);margin:14px 0 10px">
+    </div>
+    <details class="l1wrap" id="l1wrap" open>
+      <summary id="l1sum">Monster Dex — Level 1</summary>
+      <h2 style="margin-top:8px">Monster Dex <span id="dexCount">0 / 151</span></h2>
+      <div class="dexgrid" id="dexgrid"></div>
+      <h2 style="margin-top:14px">Mega Dex <span id="megaCount">0 / 24</span></h2>
+      <div class="dexgrid" id="megagrid"></div>
+      <h2 style="margin-top:14px">Super Mega Dex <span id="superCount">0 / 12</span></h2>
+      <div class="dexgrid" id="supergrid"></div>
+      <h2 style="margin-top:14px">Ultra Mega Dex <span id="ultraCount">0 / 8</span></h2>
+      <div class="dexgrid" id="ultragrid"></div>
+      <div class="dexnote" id="l1note">Catch all <b>151</b> monsters by answering questions. Streaks earn bonus catches: <b style="color:var(--sun)">3 in a row = MEGA</b> · <b style="color:#ff8c1f">6 in a row = SUPER MEGA</b> · <b style="color:var(--aqua)">9 in a row = ULTRA MEGA</b>! Catch <b>everything</b> to unlock 🏝️ <b>Monster Island — Level 2!</b></div>
+    </details>
   </div>
 
   <div class="bar">
@@ -361,7 +415,9 @@
 
   // ================== MONSTERS ==================
   var REG_TOTAL=151, MEGA_TOTAL=24, SUPER_TOTAL=12, ULTRA_TOTAL=8;
-  var TIER_NAMES=["","MEGA","SUPER MEGA","ULTRA MEGA"];
+  var L1_TOTAL=REG_TOTAL+MEGA_TOTAL+SUPER_TOTAL+ULTRA_TOTAL; // 195
+  var ISL_REG=200, ISL_MEGA=24, ISL_SUPER=12, ISL_ULTRA=8, ISL_SHINY=10;
+  var TIER_NAMES=["","MEGA","SUPER MEGA","ULTRA MEGA","SHINY MEGA"];
 
   var HANDMADE=[
     {name:"Embertail", type:"Fire",   body:"#ff6a3d", belly:"#ffd0a3", accent:"#ffb02e", feat:"horn"},
@@ -441,15 +497,48 @@
   while(SUPERS.length<SUPER_TOTAL){var sc=genCreature("Super Mega ",true,false);sc.tier=2;SUPERS.push(sc);}
   var ULTRAS=[];
   while(ULTRAS.length<ULTRA_TOTAL){var uc=genCreature("Ultra Mega ",true,false);uc.tier=3;ULTRAS.push(uc);}
-  var ALL=REGULARS.concat(MEGAS,SUPERS,ULTRAS); // index in ALL = the id stored in "caught"
-  function tierOf(idx){var c=ALL[idx];return c.mega?(c.tier||1):0;}
+  // ---- Level 2: Monster Island (generated after L1 so L1 stays identical) ----
+  var ISLAND_TYPES=["Tropic","Lagoon","Volcano","Reef","Palm","Tide","Surf","Mango","Coconut","Sunburst","Driftwood","Pearl","Breeze","Sandstorm","Jungle","Coral","Splash","Ember Isle","Monsoon","Castaway"];
+  var SHINY_PALETTES=[
+    ["#ffd700","#fff8d0","#ff8c00"],["#e8e8f2","#ffffff","#8fa8c8"],
+    ["#ffc0cb","#fff0f4","#d4af37"],["#b9f2ff","#ffffff","#00ced1"],
+    ["#f5e6a8","#fffdf0","#c9a227"]
+  ];
+  function genIsland(prefix,tier,shiny){
+    var p=shiny?rpick(SHINY_PALETTES):rpick(PALETTES);
+    return {
+      name:genName(prefix), type:rpick(ISLAND_TYPES),
+      body:p[0], belly:p[1], accent:p[2],
+      feat:rpick(FEATS),
+      rx:34+Math.floor(rng()*10), ry:37+Math.floor(rng()*9),
+      mega:tier>0, tier:tier, shiny:!!shiny, island:true
+    };
+  }
+  var IREGS=[]; while(IREGS.length<ISL_REG) IREGS.push(genIsland("",0,false));
+  var IMEGAS=[]; while(IMEGAS.length<ISL_MEGA) IMEGAS.push(genIsland("Mega ",1,false));
+  var ISUPERS=[]; while(ISUPERS.length<ISL_SUPER) ISUPERS.push(genIsland("Super Mega ",2,false));
+  var IULTRAS=[]; while(IULTRAS.length<ISL_ULTRA) IULTRAS.push(genIsland("Ultra Mega ",3,false));
+  var ISHINIES=[]; while(ISHINIES.length<ISL_SHINY) ISHINIES.push(genIsland("Shiny Mega ",4,true));
+
+  var ALL=REGULARS.concat(MEGAS,SUPERS,ULTRAS,IREGS,IMEGAS,ISUPERS,IULTRAS,ISHINIES); // index in ALL = the id stored in "caught"
+  function tierOf(idx){var c=ALL[idx];if(c.shiny)return 4;return c.mega?(c.tier||1):0;}
+  function isIsland(idx){return idx>=L1_TOTAL;}
 
   function pad3(n){n=String(n);while(n.length<3)n="0"+n;return n;}
   function dexLabel(idx){
     if(idx<REG_TOTAL) return "#"+pad3(idx+1);
     if(idx<REG_TOTAL+MEGA_TOTAL) return "MEGA #"+pad3(idx-REG_TOTAL+1);
     if(idx<REG_TOTAL+MEGA_TOTAL+SUPER_TOTAL) return "SUPER MEGA #"+pad3(idx-REG_TOTAL-MEGA_TOTAL+1);
-    return "ULTRA MEGA #"+pad3(idx-REG_TOTAL-MEGA_TOTAL-SUPER_TOTAL+1);
+    if(idx<L1_TOTAL) return "ULTRA MEGA #"+pad3(idx-REG_TOTAL-MEGA_TOTAL-SUPER_TOTAL+1);
+    var j=idx-L1_TOTAL;
+    if(j<ISL_REG) return "🏝️ #"+pad3(j+1);
+    j-=ISL_REG;
+    if(j<ISL_MEGA) return "🏝️ MEGA #"+pad3(j+1);
+    j-=ISL_MEGA;
+    if(j<ISL_SUPER) return "🏝️ SUPER MEGA #"+pad3(j+1);
+    j-=ISL_SUPER;
+    if(j<ISL_ULTRA) return "🏝️ ULTRA MEGA #"+pad3(j+1);
+    return "✨ SHINY MEGA #"+pad3(j-ISL_ULTRA+1);
   }
 
   // ================== CREATURE SVG ==================
@@ -487,6 +576,13 @@
             '<path d="M22 8 L25 15 L32 17 L25 19 L22 26 L19 19 L12 17 L19 15 Z" fill="'+a+'"/>'+
             '<path d="M60 118 m-3 0 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0" fill="'+a+'"/>';
     }
+    if(c.shiny){
+      aura+='<circle cx="60" cy="64" r="55" fill="none" stroke="#ffffff" stroke-width="2" opacity=".6"/>'+
+            '<path d="M30 14 L32 19 L37 21 L32 23 L30 28 L28 23 L23 21 L28 19 Z" fill="#ffffff"/>'+
+            '<path d="M92 10 L94 15 L99 17 L94 19 L92 24 L90 19 L85 17 L90 15 Z" fill="#ffffff"/>'+
+            '<path d="M16 62 L18 67 L23 69 L18 71 L16 76 L14 71 L9 69 L14 67 Z" fill="#ffffff"/>'+
+            '<path d="M104 66 L106 71 L111 73 L106 75 L104 80 L102 75 L97 73 L102 71 Z" fill="#ffffff"/>';
+    }
     var brows = c.mega
       ? '<line x1="40" y1="47" x2="54" y2="52" stroke="#241a3a" stroke-width="3.4" stroke-linecap="round"/>'+
         '<line x1="80" y1="47" x2="66" y2="52" stroke="#241a3a" stroke-width="3.4" stroke-linecap="round"/>'
@@ -519,7 +615,7 @@
   var MEGA_CHEERS=["MEGA CATCH!!","UNBELIEVABLE!!","LEGENDARY!!","MEGA POWER!!","3 IN A ROW — MEGA!!"];
 
   // ================== STATE ==================
-  var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0,muted:false};
+  var state={right:0,wrong:0,caught:[],mode:"mix",streak:0,answered:false,correct:0,muted:false,world:1};
   var me=null; // {name, slug, pin, admin}
   var online=null; // null unknown, true, false
 
@@ -585,6 +681,19 @@
     });
     seq.push([1976,0.7,0.3,"triangle",0.14]);
     seq.push([2637,0.85,0.55,"triangle",0.15]);
+    play(seq);
+  }
+  function sfxShiny(){
+    var seq=[];
+    [1568,1976,2349,2637,3136].forEach(function(f,i){
+      seq.push([f,i*0.09,0.25,"triangle",0.14]);
+    });
+    [523,659,784,1047,1319,1568,2093,2637].forEach(function(f,i){
+      seq.push([f,0.5+i*0.07,0.2,"square",0.1]);
+      seq.push([f*2,0.5+i*0.07,0.14,"triangle",0.09]);
+    });
+    seq.push([3136,1.15,0.4,"triangle",0.15]);
+    seq.push([3951,1.3,0.7,"triangle",0.16]);
     play(seq);
   }
   function sfxUltra(){
@@ -684,10 +793,15 @@
 
   // ================== DEX ==================
   var dexgrid=$("#dexgrid"), megagrid=$("#megagrid"), supergrid=$("#supergrid"), ultragrid=$("#ultragrid");
-  function gridFor(idx){return [dexgrid,megagrid,supergrid,ultragrid][tierOf(idx)];}
+  var idexgrid=$("#idexgrid"), imegagrid=$("#imegagrid"), isupergrid=$("#isupergrid"), iultragrid=$("#iultragrid"), ishinygrid=$("#ishinygrid");
+  function gridFor(idx){
+    return isIsland(idx)
+      ? [idexgrid,imegagrid,isupergrid,iultragrid,ishinygrid][tierOf(idx)]
+      : [dexgrid,megagrid,supergrid,ultragrid][tierOf(idx)];
+  }
   function slotClass(idx){
     var t=tierOf(idx);
-    return "slot empty"+(t===1?" megaslot":t===2?" superslot":t===3?" ultraslot":"");
+    return "slot empty"+(t===1?" megaslot":t===2?" superslot":t===3?" ultraslot":t===4?" shinyslot":"");
   }
   for(var i=0;i<ALL.length;i++){
     var s=document.createElement("div");
@@ -705,15 +819,35 @@
     slot.innerHTML=svgCreature(ALL[idx]);
   }
   function regCount(){return state.caught.filter(function(i){return i<REG_TOTAL;}).length;}
-  function tierCount(t){return state.caught.filter(function(i){return tierOf(i)===t;}).length;}
+  function l1Count(){return state.caught.filter(function(i){return i<L1_TOTAL;}).length;}
+  function l1Complete(){return l1Count()===L1_TOTAL;}
+  function tierCount(t,island){
+    return state.caught.filter(function(i){return tierOf(i)===t && isIsland(i)===!!island;}).length;
+  }
   function renderProgress(){
     $("#sRight").textContent=state.right;
     $("#sWrong").textContent=state.wrong;
     $("#sCaught").textContent=state.caught.length;
     $("#dexCount").textContent=regCount()+" / "+REG_TOTAL;
-    $("#megaCount").textContent=tierCount(1)+" / "+MEGA_TOTAL;
-    $("#superCount").textContent=tierCount(2)+" / "+SUPER_TOTAL;
-    $("#ultraCount").textContent=tierCount(3)+" / "+ULTRA_TOTAL;
+    $("#megaCount").textContent=tierCount(1,false)+" / "+MEGA_TOTAL;
+    $("#superCount").textContent=tierCount(2,false)+" / "+SUPER_TOTAL;
+    $("#ultraCount").textContent=tierCount(3,false)+" / "+ULTRA_TOTAL;
+    $("#idexCount").textContent=tierCount(0,true)+" / "+ISL_REG;
+    $("#imegaCount").textContent=tierCount(1,true)+" / "+ISL_MEGA;
+    $("#isuperCount").textContent=tierCount(2,true)+" / "+ISL_SUPER;
+    $("#iultraCount").textContent=tierCount(3,true)+" / "+ISL_ULTRA;
+    $("#ishinyCount").textContent=tierCount(4,true)+" / "+ISL_SHINY;
+  }
+  function applyWorld(){
+    var w=l1Complete()?2:1;
+    var flipped = state.world===1 && w===2;
+    state.world=w;
+    document.body.classList.toggle("island",w===2);
+    $("#lvlBadge").style.display=w===2?"inline-flex":"none";
+    $("#islandDex").style.display=w===2?"block":"none";
+    $("#l1sum").textContent = w===2 ? "⭐ Level 1 collection (complete!)" : "Monster Dex — Level 1";
+    if(flipped) $("#l1wrap").open=false;
+    return flipped;
   }
   function renderDexAll(){
     document.querySelectorAll(".slot").forEach(function(s){
@@ -777,11 +911,50 @@
     });
     var fb=$("#feedback");fb.className="feedback";fb.textContent="";
     $("#nextBtn").classList.remove("show");
+    if(state.world===2) startTimer(); else stopTimer();
+  }
+
+  // 5-second answer timer — island (Level 2) only
+  var qTimer=null, qDeadline=0;
+  function stopTimer(){
+    if(qTimer){clearInterval(qTimer);qTimer=null;}
+    $("#timerwrap").style.display="none";
+  }
+  function startTimer(){
+    stopTimer();
+    qDeadline=Date.now()+5000;
+    $("#timerwrap").style.display="flex";
+    $("#timerfill").style.width="100%";
+    $("#timersec").textContent="5";
+    qTimer=setInterval(function(){
+      var left=qDeadline-Date.now();
+      if(left<=0){stopTimer();timeUp();return;}
+      $("#timerfill").style.width=(left/50)+"%";
+      $("#timersec").textContent=String(Math.ceil(left/1000));
+    },100);
+  }
+  function timeUp(){
+    if(state.answered) return;
+    state.answered=true;
+    $("#answers").querySelectorAll(".ans").forEach(function(x){
+      x.disabled=true;
+      if(parseInt(x.dataset.val,10)===state.correct) x.classList.add("correct");
+    });
+    state.wrong++; state.streak=0;
+    updateStreak(); renderProgress();
+    sfxWrong();
+    $("#card").classList.add("shake");
+    setTimeout(function(){$("#card").classList.remove("shake");},400);
+    var fb=$("#feedback");
+    fb.className="feedback show bad";fb.textContent="⏰ Time's up! The answer is "+state.correct+".";
+    $("#nextBtn").classList.add("show");
+    saveSoon();
   }
 
   function pickAnswer(val,btn){
     if(state.answered) return;
     state.answered=true;
+    stopTimer();
     var buttons=$("#answers").querySelectorAll(".ans");
     buttons.forEach(function(x){
       x.disabled=true;
@@ -808,14 +981,16 @@
   }
 
   function streakTier(s){
-    if(s>0){
-      if(s%9===0) return 3;
-      if(s%6===0) return 2;
-      if(s%3===0) return 1;
-    }
-    return 0;
+    if(s<=0||s%3!==0) return 0;
+    if(state.world===2 && s%12===0) return 4;
+    if(s%9===0) return 3;
+    if(s%6===0) return 2;
+    return 1;
   }
-  function milestoneName(m){return m%9===0?"ULTRA MEGA":(m%6===0?"SUPER MEGA":"MEGA");}
+  function milestoneName(m){
+    if(state.world===2 && m%12===0) return "✨ SHINY MEGA";
+    return m%9===0?"ULTRA MEGA":(m%6===0?"SUPER MEGA":"MEGA");
+  }
   function updateStreak(){
     var s=$("#streak");
     if(state.streak>0){
@@ -833,9 +1008,10 @@
   // ================== REWARD ==================
   function reward(){
     var tier=streakTier(state.streak);
+    var wantIsland = state.world===2;
     var pick=[], backup=[];
     for(var i=0;i<ALL.length;i++){
-      if(tierOf(i)!==tier) continue;
+      if(tierOf(i)!==tier || isIsland(i)!==wantIsland) continue;
       (state.caught.indexOf(i)<0?pick:backup).push(i);
     }
     var from = pick.length?pick:backup;
@@ -847,46 +1023,65 @@
       fillSlot(idx,true);
       renderProgress();
     }
-    var justFinished = isNew && !c.mega && regCount()===REG_TOTAL;
+    var unlockedIsland = applyWorld(); // true only on the catch that completes Level 1
+    var finished151 = isNew && !c.mega && !c.island && regCount()===REG_TOTAL;
+    var finishedIsland = isNew && c.island && state.caught.filter(isIsland).length===ISL_REG+ISL_MEGA+ISL_SUPER+ISL_ULTRA+ISL_SHINY;
     $("#rewardMonster").innerHTML=svgCreature(c);
     $("#rewardNum").textContent=dexLabel(idx);
     $("#rewardName").textContent=c.name;
     $("#rewardType").textContent=(isNew?"NEW! ":"")+c.type+" type"+(tier>0?" · "+TIER_NAMES[tier]:(c.legend?" · LEGENDARY":""));
     var cheers = tier>0 ? MEGA_CHEERS : CHEERS;
-    $("#rewardCheer").textContent = justFinished ? "🎉 ALL 151 CAUGHT — YOU DID IT!! 🎉"
-      : (tier===3 ? "9 IN A ROW — ULTRA MEGA!!!" : tier===2 ? "6 IN A ROW — SUPER MEGA!!" : cheers[randInt(0,cheers.length-1)]);
+    $("#rewardCheer").textContent =
+      unlockedIsland ? "🏝️ LEVEL 2 UNLOCKED — WELCOME TO MONSTER ISLAND!"
+      : finishedIsland ? "🏆 YOU BEAT MONSTER ISLAND — CHAMPION!! 🏆"
+      : finished151 ? "🎉 ALL 151 CAUGHT — YOU DID IT!! 🎉"
+      : (tier===4 ? "12 IN A ROW — ✨ SHINY MEGA ✨!!!" : tier===3 ? "9 IN A ROW — ULTRA MEGA!!!" : tier===2 ? "6 IN A ROW — SUPER MEGA!!" : cheers[randInt(0,cheers.length-1)]);
     var rc=$("#reward");
-    rc.classList.remove("megaGlow","superGlow","ultraGlow");
-    if(tier===3) rc.classList.add("ultraGlow");
+    rc.classList.remove("megaGlow","superGlow","ultraGlow","shinyGlow");
+    if(tier===4) rc.classList.add("shinyGlow");
+    else if(tier===3) rc.classList.add("ultraGlow");
     else if(tier===2) rc.classList.add("superGlow");
-    else if(tier===1||justFinished) rc.classList.add("megaGlow");
+    else if(tier===1||finished151||unlockedIsland||finishedIsland) rc.classList.add("megaGlow");
     rc.classList.add("show");
-    $("#caughtLabel").textContent = justFinished ? "✦ MONSTER DEX COMPLETE! ✦" : (tier>0?"✦ "+TIER_NAMES[tier]+" CAUGHT! ✦":"✦ You caught a monster! ✦");
-    if(tier===3) sfxUltra();
+    $("#caughtLabel").textContent =
+      unlockedIsland ? "🏝️ MONSTER ISLAND UNLOCKED! 🏝️"
+      : finishedIsland ? "✦ ISLAND COMPLETE — GAME CHAMPION! ✦"
+      : finished151 ? "✦ MONSTER DEX COMPLETE! ✦"
+      : (tier>0?"✦ "+TIER_NAMES[tier]+" CAUGHT! ✦":"✦ You caught a monster! ✦");
+    if(tier===4||unlockedIsland||finishedIsland) sfxShiny();
+    else if(tier===3) sfxUltra();
     else if(tier===2) sfxSuper();
-    else if(tier===1||justFinished) sfxMega();
+    else if(tier===1||finished151) sfxMega();
     else sfxCatch();
     saveSoon();
   }
 
   // ================== LEADERBOARD ==================
   function boardRowsHTML(rows){
+    function dexScore(r){
+      return r.caught.filter(function(i){return tierOf(i)===0;}).length;
+    }
     rows.sort(function(a,b){
-      var ar=a.caught.filter(function(i){return i<REG_TOTAL;}).length;
-      var br=b.caught.filter(function(i){return i<REG_TOTAL;}).length;
-      if(br!==ar) return br-ar;
+      var d=dexScore(b)-dexScore(a);
+      if(d!==0) return d;
       return (b.right||0)-(a.right||0);
     });
     var medals=["🥇","🥈","🥉"];
     var h='<table class="btable"><tr><th></th><th>Player</th><th>Dex</th><th>Right</th><th>Wrong</th>'+(me&&me.admin?'<th></th>':'')+'</tr>';
     rows.forEach(function(r,i){
       var regs=r.caught.filter(function(x){return x<REG_TOTAL;}).length;
-      var megas=r.caught.filter(function(x){return x>=REG_TOTAL;}).length;
+      var isl=r.caught.filter(function(x){return isIsland(x)&&tierOf(x)===0;}).length;
+      var megas=r.caught.filter(function(x){return tierOf(x)>0;}).length;
+      var shinies=r.caught.filter(function(x){return tierOf(x)===4;}).length;
+      var onIsland=r.caught.filter(function(x){return x<L1_TOTAL;}).length===L1_TOTAL;
       var isMe=me&&r.name.toLowerCase()===me.name.toLowerCase();
+      var sub='';
+      if(megas) sub+=megas+' mega'+(megas>1?'s':'');
+      if(shinies) sub+=(sub?' · ':'')+'✨'+shinies;
       h+='<tr'+(isMe?' class="me"':'')+'>'+
         '<td>'+(medals[i]||(i+1))+'</td>'+
-        '<td>'+escapeHTML(r.name)+(r.admin?' 👑':'')+(megas?'<span class="sub">'+megas+' mega'+(megas>1?'s':'')+'</span>':'')+'</td>'+
-        '<td>'+regs+'/'+REG_TOTAL+'</td>'+
+        '<td>'+escapeHTML(r.name)+(onIsland?' 🏝️':'')+(r.admin?' 👑':'')+(sub?'<span class="sub">'+sub+'</span>':'')+'</td>'+
+        '<td>'+regs+'/'+REG_TOTAL+(onIsland?'<span class="sub">🏝️ '+isl+'/'+ISL_REG+'</span>':'')+'</td>'+
         '<td>'+(r.right||0)+'</td>'+
         '<td>'+(r.wrong||0)+'</td>'+
         (me&&me.admin?'<td>'+(r.docName?'<button class="rm" data-doc="'+r.docName+'" data-name="'+escapeHTML(r.name)+'">✖</button>':'')+'</td>':'')+
@@ -947,8 +1142,8 @@
         for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("mmlocal_")===0)kill.push(k);}
         kill.forEach(function(k){localStorage.removeItem(k);});
       }catch(e){}
-      state.right=0;state.wrong=0;state.caught=[];state.streak=0;
-      renderProgress();renderDexAll();updateStreak();saveSoon();
+      state.right=0;state.wrong=0;state.caught=[];state.streak=0;state.world=1;
+      renderProgress();renderDexAll();updateStreak();applyWorld();saveSoon();
       openBoard();
     }).catch(function(){alert("Could not clear right now — try again.");});
   });
@@ -962,7 +1157,8 @@
     state.wrong=d.wrong||0;
     state.caught=(d.caught||[]).filter(function(i){return i>=0&&i<ALL.length;});
     state.streak=0;
-    renderProgress();renderDexAll();updateStreak();
+    state.world=1;
+    renderProgress();renderDexAll();updateStreak();applyWorld();
   }
   function finishLogin(){
     try{localStorage.setItem("mmlast",me.name);}catch(e){}
@@ -1030,11 +1226,11 @@
     newQuestion();
   });
   $("#changeMode").addEventListener("click",function(){
-    sfxTap();
+    sfxTap(); stopTimer();
     $("#start").classList.add("show");
   });
   $("#switchBtn").addEventListener("click",function(){
-    sfxTap(); flushSave();
+    sfxTap(); stopTimer(); flushSave();
     me=null;
     $("#playerTag").textContent="Not signed in";
     $("#loginErr").textContent="";
@@ -1048,8 +1244,9 @@
   $("#resetBtn").addEventListener("click",function(){
     if(!me) return;
     if(!confirm("Start over, "+me.name+"? This clears YOUR score and monsters (other players keep theirs).")) return;
-    state.right=0;state.wrong=0;state.caught=[];state.streak=0;
-    renderProgress();renderDexAll();updateStreak();
+    stopTimer();
+    state.right=0;state.wrong=0;state.caught=[];state.streak=0;state.world=1;
+    renderProgress();renderDexAll();updateStreak();applyWorld();
     saveSoon();
     $("#start").classList.add("show");
   });
