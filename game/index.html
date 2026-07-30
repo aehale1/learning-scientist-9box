@@ -177,6 +177,12 @@
   @keyframes danceB{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-12deg)}50%{transform:translateY(-12px) scale(1.14)}75%{transform:rotate(12deg)}}
   @keyframes danceC{0%,100%{transform:translateY(0) scaleX(1)}30%{transform:translateY(-24px) scaleX(-1)}60%{transform:translateY(0) scaleX(-1)}80%{transform:translateY(-8px) scaleX(1)}}
   @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  .teaser{
+    font-size:14px;font-weight:800;color:var(--ink);letter-spacing:.3px;
+    border:2px dashed var(--sun);border-radius:12px;padding:10px 14px;
+    animation:pulse 2s ease-in-out infinite;
+  }
+  .teaser b{color:var(--sun)}
   .dexnote{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
 
   .bar{display:flex;gap:10px}
@@ -381,6 +387,7 @@
     <div class="ptitle">🏆 CHAMPION! 🏆</div>
     <div class="psub">You beat <b>Monster Island</b>!<br>Every single monster caught — all 449!</div>
     <div class="dancefloor" id="dancefloor"></div>
+    <div class="teaser">🚧 Max is building a third location… <b>STAY TUNED!</b> 🚧</div>
     <button class="next show" id="partyClose">🎉 Keep playing ▶</button>
   </div>
 </div>
