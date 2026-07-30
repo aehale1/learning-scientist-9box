@@ -145,6 +145,16 @@
   .lvl{display:none;align-items:center;gap:4px;font-size:11px;font-weight:900;padding:4px 10px;border-radius:999px;background:linear-gradient(180deg,#1a8a6a,#0d5a44);border:1px solid #33e6c9;color:#d2fff6}
 
   /* Question timer (island only) */
+  .card{position:relative}
+  .pausecover{
+    display:none;position:absolute;inset:0;z-index:5;border-radius:26px;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;
+  }
+  .card.paused .pausecover{display:flex}
+  .pmsg{font-weight:900;font-size:20px}
+  .pmsg span{display:block;font-size:13px;color:var(--muted);font-weight:700;margin-top:6px;line-height:1.5}
+  .pausebtn{border:1px solid var(--edge);background:var(--panel);color:var(--sun);border-radius:10px;min-width:44px;min-height:30px;font-size:15px;cursor:pointer;font-family:inherit}
   .timerwrap{display:none;align-items:center;gap:10px}
   .timerbar{flex:1;height:12px;border-radius:999px;background:#0006;overflow:hidden;border:1px solid var(--edge)}
   .timerfill{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,var(--good),var(--sun) 60%,var(--bad));transition:width .1s linear}
@@ -319,6 +329,12 @@
     <div class="timerwrap" id="timerwrap">
       <div class="timerbar"><div class="timerfill" id="timerfill"></div></div>
       <span class="timersec" id="timersec">5</span>
+      <button class="pausebtn" id="pauseBtn" aria-label="Pause the timer">⏸</button>
+    </div>
+    <div class="pausecover">
+      <div style="font-size:36px">⏸</div>
+      <div class="pmsg">Paused — no peeking!<span>Check the leaderboard or scroll down to look at your monsters.<br>The clock is frozen until you come back.</span></div>
+      <button class="next show" id="resumeBtn">▶ Resume</button>
     </div>
     <div class="question" id="question">— <span class="op">×</span> — <span class="eq">=</span> ?</div>
     <div class="answers" id="answers"></div>
@@ -954,24 +970,47 @@
     if(state.world===2) startTimer(); else stopTimer();
   }
 
-  // 5-second answer timer — island (Level 2) only
-  var qTimer=null, qDeadline=0;
+  // 5-second answer timer — island (Level 2) only, with pause support
+  var qTimer=null, qDeadline=0, paused=false, pauseRemain=0;
+  function clearPause(){
+    paused=false; pauseRemain=0;
+    $("#card").classList.remove("paused");
+  }
   function stopTimer(){
     if(qTimer){clearInterval(qTimer);qTimer=null;}
+    clearPause();
     $("#timerwrap").style.display="none";
   }
-  function startTimer(){
-    stopTimer();
-    qDeadline=Date.now()+5000;
+  function armTimer(){
     $("#timerwrap").style.display="flex";
-    $("#timerfill").style.width="100%";
-    $("#timersec").textContent="5";
     qTimer=setInterval(function(){
       var left=qDeadline-Date.now();
       if(left<=0){stopTimer();timeUp();return;}
       $("#timerfill").style.width=(left/50)+"%";
       $("#timersec").textContent=String(Math.ceil(left/1000));
     },100);
+  }
+  function startTimer(){
+    stopTimer();
+    qDeadline=Date.now()+5000;
+    $("#timerfill").style.width="100%";
+    $("#timersec").textContent="5";
+    armTimer();
+  }
+  function pauseGame(){
+    if(state.world!==2 || state.answered || paused || !qTimer) return;
+    clearInterval(qTimer); qTimer=null;
+    pauseRemain=Math.max(500, qDeadline-Date.now());
+    paused=true;
+    $("#card").classList.add("paused");
+  }
+  function resumeGame(){
+    if(!paused) return;
+    paused=false;
+    $("#card").classList.remove("paused");
+    qDeadline=Date.now()+pauseRemain;
+    pauseRemain=0;
+    armTimer();
   }
   function timeUp(){
     if(state.answered) return;
@@ -1310,14 +1349,18 @@
       openBoard();
     }).catch(function(){alert("Could not clear right now — try again.");});
   });
-  $("#boardBtn").addEventListener("click",function(){sfxTap();stopTimer();openBoard();});
+  $("#boardBtn").addEventListener("click",function(){
+    sfxTap();
+    pauseGame(); // island questions freeze while the board is open; resume when ready
+    openBoard();
+  });
   $("#boardRefresh").addEventListener("click",function(){sfxTap();openBoard();});
   $("#boardClose").addEventListener("click",function(){
     sfxTap();
     $("#board").classList.remove("show");
-    // island questions are timed — deal a fresh one instead of resuming a stale clock
-    if(me && state.world===2 && !state.answered && !$("#start").classList.contains("show") && !$("#login").classList.contains("show")) newQuestion();
   });
+  $("#pauseBtn").addEventListener("click",function(){sfxTap();pauseGame();});
+  $("#resumeBtn").addEventListener("click",function(){sfxTap();resumeGame();});
 
   // ================== LOGIN ==================
   function applyLoadedData(d){
