@@ -629,7 +629,7 @@
   while(REGULARS.length<REG_TOTAL)   REGULARS.push(genCreature("",false,true)); // last 7 are legendary
   // Cameo monsters named after Max's real friends (overwritten after generation so the rest of the roster is unchanged)
   REGULARS[25]={name:"Chase",  type:"Speedy", body:"#39a8ff", belly:"#bfe7ff", accent:"#ffd23f", feat:"bolt", rx:40, ry:42, cameo:true};
-  REGULARS[26]={name:"Brookes",type:"Brave",  body:"#48c463", belly:"#d6ffcf", accent:"#ff8c1f", feat:"horn", rx:41, ry:43, cameo:true};
+  REGULARS[26]={name:"Brooks",type:"Brave",  body:"#48c463", belly:"#d6ffcf", accent:"#ff8c1f", feat:"horn", rx:41, ry:43, cameo:true};
   var MEGAS=HANDMADE_MEGAS.slice();
   while(MEGAS.length<MEGA_TOTAL) MEGAS.push(genCreature("Mega ",true,false));
   MEGAS.forEach(function(c){c.tier=1;});
@@ -1351,7 +1351,7 @@
     if(c.shiny) stats[3]=10;
     if(c.mathmega) stats[2]=10; // Math Megas always have perfect Smarts
     if(c.name==="Chase") stats[0]=10; // Chase's power is off the charts
-    if(c.cameo) stats[2]=10; // Chase and Brookes are both super smart
+    if(c.cameo) stats[2]=10; // Chase and Brooks are both super smart
     var hFt=Math.round((1+r()*5+(c.mega?2:0))*10)/10;
     var wLb=Math.round(5+r()*120+(c.mega?80:0));
     var table=2+Math.floor(r()*11);
