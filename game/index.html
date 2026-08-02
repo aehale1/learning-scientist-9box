@@ -456,7 +456,7 @@
     <div class="mname" id="rewardName">—</div>
     <div class="mtype" id="rewardType">—</div>
     <div class="cheer" id="rewardCheer">Nice work!</div>
-    <div class="teaser" id="rewardTeaser" style="display:none">🚧 Max is dreaming up the next world… <b>STAY TUNED!</b> 🚧</div>
+    <div class="teaser" id="rewardTeaser" style="display:none">🚧 Max is building a new level… <b>STAY TUNED!</b><br>Share your ideas with him at school! 🚧</div>
     <button class="next show" id="rewardNext">Catch &amp; continue ▶</button>
   </div>
 </div>
@@ -482,6 +482,7 @@
     <div class="ptitle">🏆 CHAMPION! 🏆</div>
     <div class="psub" id="partySub">You beat <b>Monster Island</b>!<br>The Underwater Temple City awaits below the waves…</div>
     <div class="dancefloor" id="dancefloor"></div>
+    <div class="teaser" id="partyTeaser" style="display:none">🚧 Max is building a new level… <b>STAY TUNED!</b><br>Share your ideas with him at school! 🚧</div>
     <button class="next show" id="partyClose">🎉 Keep playing ▶</button>
   </div>
 </div>
@@ -626,6 +627,9 @@
   var REGULARS=HANDMADE.slice();
   while(REGULARS.length<REG_TOTAL-7) REGULARS.push(genCreature("",false,false));
   while(REGULARS.length<REG_TOTAL)   REGULARS.push(genCreature("",false,true)); // last 7 are legendary
+  // Cameo monsters named after Max's real friends (overwritten after generation so the rest of the roster is unchanged)
+  REGULARS[25]={name:"Chase",  type:"Speedy", body:"#39a8ff", belly:"#bfe7ff", accent:"#ffd23f", feat:"bolt", rx:40, ry:42, cameo:true};
+  REGULARS[26]={name:"Brookes",type:"Brave",  body:"#48c463", belly:"#d6ffcf", accent:"#ff8c1f", feat:"horn", rx:41, ry:43, cameo:true};
   var MEGAS=HANDMADE_MEGAS.slice();
   while(MEGAS.length<MEGA_TOTAL) MEGAS.push(genCreature("Mega ",true,false));
   MEGAS.forEach(function(c){c.tier=1;});
@@ -1315,10 +1319,12 @@
     else sfxCatch();
     var templeAllCaught = state.caught.filter(isTemple).length===TEM_TOTAL;
     $("#rewardTeaser").style.display = templeAllCaught ? "block" : "none";
-    if(toTemple || finishedTemple){
-      $("#partySub").innerHTML = finishedTemple
-        ? "You conquered the <b>Underwater Temple City</b>!<br>Every single monster caught — all 761!"
-        : "You beat <b>Monster Island</b>!<br>The Underwater Temple City awaits below the waves…";
+    if(toIsland || toTemple || finishedTemple){
+      $("#partySub").innerHTML =
+        finishedTemple ? "You conquered the <b>Underwater Temple City</b>!<br>Every single monster caught — all 761!"
+        : toTemple ? "You beat <b>Monster Island</b>!<br>🌊 The Underwater Temple City awaits — <b>Level 3</b>!"
+        : "You finished <b>Level 1</b> — the whole dex, megas and all!<br>🏝️ Monster Island awaits — <b>Level 2</b>!";
+      $("#partyTeaser").style.display = finishedTemple ? "block" : "none";
       pendingParty=true;
     }
     saveSoon();
@@ -1345,6 +1351,7 @@
     var bio=c.temple
       ? c.name+" "+p(SEA_HOME)+" and loves "+p(SEA_LIKE)+". "+p(BIO_POWER)+"!"
       : c.name+" "+p(BIO_HOME)+" and loves "+p(BIO_LIKE)+". "+p(BIO_POWER)+"!";
+    if(c.cameo) bio="Named after one of Max's real friends! "+bio;
     return {stats:stats,hFt:hFt,wLb:wLb,table:table,bio:bio};
   }
   function rarityLabel(c){
@@ -1368,6 +1375,7 @@
     chips+='<span class="mchip">'+(caught?escapeHTML(c.type)+" type":"? type")+'</span>';
     var rare=rarityLabel(c);
     if(rare!=="Common") chips+='<span class="mchip '+(c.shiny?"shiny":"rare")+'">'+rare+'</span>';
+    if(c.cameo) chips+='<span class="mchip rare">🌟 Friend</span>';
     chips+='<span class="mchip">'+(c.temple?"🌊 Temple City":c.island?"🏝️ Island":"⭐ Level 1")+'</span>';
     $("#mcChips").innerHTML=chips;
     if(caught){
