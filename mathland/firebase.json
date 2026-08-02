@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "target": "mathland",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/.*/**"
+    ]
+  }
+}

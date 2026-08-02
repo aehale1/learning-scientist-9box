@@ -5,7 +5,7 @@
   "targets": {
     "math-monsters-151": {
       "hosting": {
-        "game": ["math-monsters-151"]
+        "mathland": ["monsters-of-mathland"]
       }
     }
   }

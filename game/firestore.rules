@@ -1,9 +1,13 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Family math game: player docs are open to the game client.
-    // Each doc holds a display name plus a JSON blob of game progress.
+    // Math Monsters (multiplication game) player docs
     match /players/{playerId} {
+      allow read, create, delete: if true;
+      allow update: if true;
+    }
+    // Monsters of Mathland (addition/subtraction game) player docs
+    match /mathland_players/{playerId} {
       allow read, create, delete: if true;
       allow update: if true;
     }
