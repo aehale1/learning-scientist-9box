@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "target": "countdown",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/.*/**"
+    ]
+  }
+}

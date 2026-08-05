@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Business days remaining until Friday, June 30, 2028 — weekends and holidays excluded.">
+<title>Countdown to June 30, 2028</title>
+<style>
+  :root{
+    --ground:#f6f6f3;
+    --panel:#ffffff;
+    --ink:#171a1f;
+    --muted:#5f6670;
+    --line:#e2e3de;
+    --counted:#2f7a56;
+    --holiday:#9c6414;
+    --weekend:#6f7681;
+    --shadow:0 1px 2px rgba(20,25,20,.06), 0 12px 28px -18px rgba(20,25,20,.35);
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ground:#101319;
+      --panel:#171b23;
+      --ink:#e9ebee;
+      --muted:#98a0ab;
+      --line:#252b35;
+      --counted:#5cb98c;
+      --holiday:#e0a94e;
+      --weekend:#79818d;
+      --shadow:0 1px 2px rgba(0,0,0,.5), 0 18px 36px -22px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#f6f6f3; --panel:#ffffff; --ink:#171a1f; --muted:#5f6670; --line:#e2e3de;
+    --counted:#2f7a56; --holiday:#9c6414; --weekend:#6f7681;
+    --shadow:0 1px 2px rgba(20,25,20,.06), 0 12px 28px -18px rgba(20,25,20,.35);
+  }
+  :root[data-theme="dark"]{
+    --ground:#101319; --panel:#171b23; --ink:#e9ebee; --muted:#98a0ab; --line:#252b35;
+    --counted:#5cb98c; --holiday:#e0a94e; --weekend:#79818d;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 18px 36px -22px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    min-height:100dvh;
+    display:flex;
+    padding:clamp(16px,4vw,44px) clamp(14px,4vw,24px);
+  }
+  main{width:100%;max-width:580px;margin:auto;display:flex;flex-direction:column;gap:16px}
+
+  .eyebrow{
+    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;
+    color:var(--muted);margin:0 0 6px;
+  }
+  .target{
+    font-family:var(--mono);font-size:clamp(15px,4vw,17px);font-weight:600;
+    letter-spacing:-.01em;margin:0;
+  }
+
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);
+  }
+
+  /* Hero counter */
+  .hero{padding:clamp(24px,6vw,36px) clamp(18px,5vw,32px) clamp(20px,5vw,28px);text-align:center}
+  .count{
+    font-family:var(--mono);
+    font-size:clamp(76px,23vw,148px);
+    font-weight:700;
+    line-height:.86;
+    letter-spacing:-.045em;
+    font-variant-numeric:tabular-nums;
+    color:var(--counted);
+    display:block;
+    margin:0;
+  }
+  .count-label{
+    font-size:clamp(12px,3.2vw,14px);font-weight:700;text-transform:uppercase;
+    letter-spacing:.19em;color:var(--ink);margin:16px 0 0;
+  }
+  .count-note{font-size:12.5px;color:var(--muted);margin:7px 0 0;line-height:1.5}
+
+  /* Today strip */
+  .today{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 18px;border-top:1px solid var(--line);
+  }
+  .today-label{font-size:12px;font-weight:600;color:var(--muted);line-height:1.4}
+  .today-label b{color:var(--ink);font-weight:700}
+  .clock{
+    font-family:var(--mono);font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;
+    letter-spacing:-.01em;white-space:nowrap;
+  }
+
+  /* Stat row */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .stat{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 12px;text-align:center;box-shadow:var(--shadow);
+  }
+  .stat .n{
+    font-family:var(--mono);font-size:clamp(21px,6vw,27px);font-weight:700;
+    font-variant-numeric:tabular-nums;letter-spacing:-.03em;display:block;line-height:1;
+  }
+  .stat .k{
+    font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;
+    color:var(--muted);margin-top:8px;display:block;line-height:1.35;
+  }
+  .stat.wk .n{color:var(--weekend)}
+  .stat.hol .n{color:var(--holiday)}
+
+  /* Holiday ledger */
+  .ledger{padding:16px 18px 8px}
+  .ledger h2{
+    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;
+    color:var(--muted);margin:0 0 2px;
+  }
+  .ledger .sub{font-size:12.5px;color:var(--muted);margin:0 0 12px;line-height:1.5}
+  ol{list-style:none;margin:0;padding:0}
+  li{
+    display:flex;align-items:baseline;gap:12px;
+    padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;
+  }
+  li:first-child{border-top:none}
+  li .date{
+    font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;
+    color:var(--holiday);font-weight:600;white-space:nowrap;flex:0 0 auto;min-width:112px;
+  }
+  li .name{color:var(--ink);flex:1;line-height:1.4}
+  li .days{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  li.past{opacity:.4}
+  li.past .date{color:var(--muted)}
+
+  .foot{
+    font-size:11.5px;color:var(--muted);line-height:1.65;padding:12px 4px 0;margin:0;
+  }
+  .foot code{font-family:var(--mono);font-size:11px}
+  .done{font-size:15px;font-weight:600;color:var(--counted);margin:0;padding:14px 18px;border-top:1px solid var(--line)}
+
+  @media (max-width:400px){
+    li .date{min-width:96px}
+    li .days{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <p class="eyebrow">Business days remaining until</p>
+    <p class="target" id="targetLine">Friday, June 30, 2028</p>
+  </div>
+
+  <section class="card">
+    <div class="hero">
+      <span class="count" id="count">—</span>
+      <p class="count-label">Business Days</p>
+      <p class="count-note" id="countNote">Weekends and listed holidays excluded. Days end at 5:00 pm.</p>
+    </div>
+    <div class="today" id="todayStrip">
+      <span class="today-label" id="todayLabel">—</span>
+      <span class="clock" id="clock">--:--:--</span>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><span class="n" id="calDays">—</span><span class="k">Calendar<br>days</span></div>
+    <div class="stat wk"><span class="n" id="wkDays">—</span><span class="k">Weekend<br>days off</span></div>
+    <div class="stat hol"><span class="n" id="holDays">—</span><span class="k">Holidays<br>off</span></div>
+  </section>
+
+  <section class="card ledger">
+    <h2>Holidays not counted</h2>
+    <p class="sub" id="ledgerSub">From your calendar — every one falls on a weekday, so each removes a full business day.</p>
+    <ol id="holidayList"></ol>
+    <p class="foot">
+      Counts every Monday–Friday through <strong>Friday, June 30, 2028</strong> (the target day included). Today
+      still counts while you're working it — at <strong>5:00 pm</strong> local time the day is marked done and
+      drops off the total. Winter Break days that land on a Saturday or Sunday are already covered by the weekend
+      rule, and New Year's Day 2028 is observed <code>Fri, Dec 31, 2027</code>. The page re-tallies itself at 5pm
+      and again at midnight.
+    </p>
+  </section>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  // Target: Friday, June 30, 2028
+  var TARGET = { y:2028, m:6, d:30 };
+
+  // A work day is considered finished at 5:00 pm local time.
+  var WORKDAY_END_HOUR = 17;
+
+  // Observed holiday dates, exactly as listed on the district calendar.
+  // "New Year's Day 2028 = Fri, Dec 31" falls in calendar 2027 (Jan 1, 2028 is a Saturday).
+  var HOLIDAYS = [
+    ["2026-01-01","New Year's Day"],
+    ["2026-01-19","Martin Luther King Jr. Day"],
+    ["2026-05-25","Memorial Day"],
+    ["2026-07-03","Independence Day (observed)"],
+    ["2026-09-07","Labor Day"],
+    ["2026-11-11","Veterans Day"],
+    ["2026-11-26","Thanksgiving"],
+    ["2026-11-27","Day after Thanksgiving"],
+    ["2026-12-24","Winter Break"],
+    ["2026-12-25","Winter Break"],
+    ["2027-01-01","New Year's Day"],
+    ["2027-01-18","Martin Luther King Jr. Day"],
+    ["2027-05-31","Memorial Day"],
+    ["2027-07-05","Independence Day (observed)"],
+    ["2027-09-06","Labor Day"],
+    ["2027-11-11","Veterans Day"],
+    ["2027-11-25","Thanksgiving"],
+    ["2027-11-26","Day after Thanksgiving"],
+    ["2027-12-24","Winter Break"],
+    ["2027-12-27","Winter Break"],
+    ["2027-12-31","New Year's Day (observed)"],
+    ["2028-01-17","Martin Luther King Jr. Day"],
+    ["2028-05-29","Memorial Day"]
+  ];
+
+  var holidaySet = {};
+  HOLIDAYS.forEach(function(h){ holidaySet[h[0]] = h[1]; });
+
+  function key(dt){
+    var m = dt.getMonth()+1, d = dt.getDate();
+    return dt.getFullYear() + "-" + (m<10?"0":"") + m + "-" + (d<10?"0":"") + d;
+  }
+  function isWeekend(dt){ var g = dt.getDay(); return g===0 || g===6; }
+  function isHoliday(dt){ return Object.prototype.hasOwnProperty.call(holidaySet, key(dt)); }
+  function isBusinessDay(dt){ return !isWeekend(dt) && !isHoliday(dt); }
+
+  var LONG = { weekday:"long", year:"numeric", month:"long", day:"numeric" };
+  var SHORT = { weekday:"short", month:"short", day:"numeric", year:"numeric" };
+  function fmt(dt, opts){
+    try { return dt.toLocaleDateString(undefined, opts); }
+    catch(e){ return key(dt); }
+  }
+
+  function quittingTime(dt){
+    return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), WORKDAY_END_HOUR, 0, 0, 0);
+  }
+
+  function nextBusinessDay(from){
+    var d = new Date(from.getTime());
+    d.setDate(d.getDate()+1);
+    for (var i=0; i<400; i++){
+      if (isBusinessDay(d)) return d;
+      d.setDate(d.getDate()+1);
+    }
+    return d;
+  }
+
+  function tally(){
+    var now = new Date();
+    var cur = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var end = new Date(TARGET.y, TARGET.m-1, TARGET.d);
+
+    // Today still counts only while it is a work day that hasn't hit 5pm yet.
+    var onTheClock = isBusinessDay(cur) && now < quittingTime(now);
+
+    var res = {
+      biz:0, cal:0, wknd:0, hol:0,
+      today:cur, now:now, end:end,
+      past:(cur > end),
+      onTheClock:onTheClock
+    };
+
+    // Count from today (if it's still in progress) or tomorrow, through the target day.
+    var d = new Date(cur.getTime());
+    if (!onTheClock) d.setDate(d.getDate()+1);
+    while (d <= end){
+      res.cal++;
+      if (isWeekend(d)) res.wknd++;
+      else if (isHoliday(d)) res.hol++;
+      else res.biz++;
+      d.setDate(d.getDate()+1);
+    }
+    return res;
+  }
+
+  function businessDaysBetween(from, to){
+    var n = 0, d = new Date(from.getTime());
+    d.setDate(d.getDate()+1);
+    while (d <= to){ if (isBusinessDay(d)) n++; d.setDate(d.getDate()+1); }
+    return n;
+  }
+
+  function renderLedger(today, end){
+    var list = $("holidayList");
+    list.innerHTML = "";
+    var shown = 0;
+    HOLIDAYS.forEach(function(h){
+      var parts = h[0].split("-");
+      var dt = new Date(+parts[0], +parts[1]-1, +parts[2]);
+      if (dt > end) return;                 // beyond the target date
+      var isPast = dt <= today;
+      if (isPast && shown > 0) { /* keep list tight: past ones still shown, dimmed */ }
+      var li = document.createElement("li");
+      if (isPast) li.className = "past";
+      var away = isPast ? "" : businessDaysBetween(today, dt) + " bd away";
+      li.innerHTML =
+        '<span class="date">' + fmt(dt, SHORT).replace(/,\s*(\d{4})$/, ", $1") + '</span>' +
+        '<span class="name">' + h[1] + '</span>' +
+        '<span class="days">' + away + '</span>';
+      list.appendChild(li);
+      shown++;
+    });
+    var upcoming = 0;
+    HOLIDAYS.forEach(function(h){
+      var p = h[0].split("-");
+      var dt = new Date(+p[0], +p[1]-1, +p[2]);
+      if (dt > today && dt <= end) upcoming++;
+    });
+    $("ledgerSub").textContent = upcoming + " holidays left before the target date — every one lands on a weekday, so each removes a full business day.";
+  }
+
+  var lastDayKey = null, lastStateKey = null;
+
+  // Changes at midnight AND at 5pm — both move the count.
+  function stateKey(now){
+    return key(now) + (now < quittingTime(now) ? "|open" : "|closed");
+  }
+
+  function refresh(){
+    var r = tally();
+    var todayKey = key(r.today);
+
+    $("targetLine").textContent = fmt(r.end, LONG);
+
+    $("count").textContent = r.biz.toLocaleString();
+    $("calDays").textContent = r.cal.toLocaleString();
+    $("wkDays").textContent = r.wknd.toLocaleString();
+    $("holDays").textContent = r.hol.toLocaleString();
+
+    var isTargetDay = todayKey === key(r.end);
+    var NEXT = { weekday:"long", month:"short", day:"numeric" };
+    var upNext = "Next work day: <b>" + fmt(nextBusinessDay(r.today), NEXT) + "</b>.";
+    var label, note, showClock = r.onTheClock;
+
+    if (r.past || (isTargetDay && !r.onTheClock)){
+      note  = "Friday, June 30, 2028 is done.";
+      label = "<b>The countdown is complete.</b> 🎉";
+      showClock = false;
+    } else if (isTargetDay){
+      note  = "Today is the day — Friday, June 30, 2028.";
+      label = "This is the <b>final work day</b>. It's done at 5:00 pm, in";
+    } else {
+      note  = "About " + (r.biz/5).toFixed(1) + " work weeks. " + (r.onTheClock
+                ? "Today counts until 5:00 pm."
+                : "Weekends and listed holidays are already removed.");
+      if (r.onTheClock)            label = "Today is a <b>business day</b>. Done at 5:00 pm, in";
+      else if (isWeekend(r.today)) label = "Today is the <b>weekend</b> — not counted. " + upNext;
+      else if (isHoliday(r.today)) label = "Today is a <b>holiday</b> (" + holidaySet[todayKey] + ") — not counted. " + upNext;
+      else                         label = "Today's work day is <b>done</b> ✓ &nbsp;" + upNext;
+    }
+
+    $("countNote").textContent = note;
+    $("todayLabel").innerHTML = label;
+    $("clock").style.display = showClock ? "" : "none";
+
+    if (todayKey !== lastDayKey){
+      renderLedger(r.today, r.end);
+      lastDayKey = todayKey;
+    }
+    lastStateKey = stateKey(r.now);
+  }
+
+  function tick(){
+    var now = new Date();
+
+    // Re-tally when the date rolls over or when the clock strikes 5.
+    if (stateKey(now) !== lastStateKey) refresh();
+
+    var el = $("clock");
+    if (!el || el.style.display === "none") return;
+
+    var ms = quittingTime(now) - now;
+    if (ms < 0) ms = 0;
+    var h = Math.floor(ms/3600000);
+    var m = Math.floor(ms/60000) % 60;
+    var s = Math.floor(ms/1000) % 60;
+    var pad = function(n){ return (n<10?"0":"") + n; };
+    el.textContent = pad(h) + ":" + pad(m) + ":" + pad(s);
+  }
+
+  refresh();
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

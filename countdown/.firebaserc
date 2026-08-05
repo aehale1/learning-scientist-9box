@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "math-monsters-151"
+  },
+  "targets": {
+    "math-monsters-151": {
+      "hosting": {
+        "countdown": ["countdown75"]
+      }
+    }
+  }
+}
